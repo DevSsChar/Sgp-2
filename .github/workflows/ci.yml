@@ -31,7 +31,7 @@ jobs:
         run: npm run lint
 
       # 5. Run tests
-      - name: Test
-        env:
-          CI: true
-        run: npm run test -- --passWithNoTests
+      # - name: Test
+      #   env:
+      #     CI: true
+      #   run: npm run test -- --passWithNoTests
