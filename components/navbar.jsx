@@ -29,7 +29,7 @@ export default function Navbar() {
               Sign In
             </a>
             <a 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/90 shadow-md transition-all duration-300 h-10 px-4 py-2" 
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/80 shadow-md transition-all duration-300 h-10 px-4 py-2" 
               href="/dashboard/overview"
             >
               Get Started Free
