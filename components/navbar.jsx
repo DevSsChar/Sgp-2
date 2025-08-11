@@ -1,73 +1,69 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => setMounted(true), []);
+
+  const toggleMenu = () => setIsMenuOpen((v) => !v);
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <a className="font-poppins text-xl font-bold text-blue-600" href="/">
+          <Link href="/" className="font-poppins text-xl font-bold text-blue-600">
             AccessibilityGuard
-          </a>
+          </Link>
+
           <div className="hidden md:flex items-center space-x-8">
-            <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#features">Features</a>
-            <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#how-it-works">How It Works</a>
-            <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#pricing">Pricing</a>
-            <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#about">About</a>
+            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#features">Features</Link>
+            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#how-it-works">How It Works</Link>
+            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#pricing">Pricing</Link>
+            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#about">About</Link>
           </div>
+
           <div className="hidden md:flex items-center space-x-3">
-            <a 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors h-10 px-4 py-2" 
-              href="/dashboard/overview"
+            <Link
+              href="/login"
+              prefetch={false}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/80 shadow-md transition-all duration-300 h-10 px-4 py-2"
             >
               Sign In
-            </a>
-            <a 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/80 shadow-md transition-all duration-300 h-10 px-4 py-2" 
-              href="/dashboard/overview"
-            >
-              Get Started Free
-            </a>
+            </Link>
           </div>
-          <button 
+
+          <button
             className="md:hidden p-2"
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-nav"
             onClick={toggleMenu}
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round"
               className="lucide lucide-menu h-6 w-6 text-gray-600"
             >
-              <line x1="4" x2="20" y1="12" y2="12"></line>
-              <line x1="4" x2="20" y1="6" y2="6"></line>
-              <line x1="4" x2="20" y1="18" y2="18"></line>
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
             </svg>
           </button>
-          
-          {/* Mobile menu, show/hide based on menu state */}
-          {isMenuOpen && (
-            <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg p-4">
+
+          {mounted && isMenuOpen && (
+            <div id="mobile-nav" className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg p-4">
               <div className="flex flex-col space-y-4">
-                <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#features">Features</a>
-                <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#how-it-works">How It Works</a>
-                <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#pricing">Pricing</a>
-                <a className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#about">About</a>
-                <a className="font-medium text-[#00d4ff]" href="/dashboard/overview">Sign In</a>
-                <a className="inline-flex items-center justify-center rounded-md bg-[#00d4ff] text-white font-semibold px-4 py-2" href="/dashboard/overview">Get Started Free</a>
+                <Link href="#features" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>Features</Link>
+                <Link href="#how-it-works" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
+                <Link href="#pricing" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+                <Link href="#about" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>About</Link>
+                <Link href="/dashboard/overview" className="font-medium text-[#00d4ff]" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+                <Link href="/dashboard/overview" className="inline-flex items-center justify-center rounded-md bg-[#00d4ff] text-white font-semibold px-4 py-2" onClick={() => setIsMenuOpen(false)}>Get Started Free</Link>
               </div>
             </div>
           )}
