@@ -43,7 +43,7 @@ export default function Navbar() {
                   </span>
                   <div className="flex items-center gap-3">
                     <a
-                      href={session?.user?.profileUrl || "/dashboard/overview"}
+                      href={session?.user?.profileUrl || "/dashboard"}
                       className="text-xs text-[#00d4ff] hover:underline"
                       target={session?.user?.profileUrl ? "_blank" : undefined}
                       rel={session?.user?.profileUrl ? "noreferrer" : undefined}
@@ -107,7 +107,7 @@ export default function Navbar() {
                     <div className="flex flex-col">
                       <span className="font-medium text-gray-800">{session?.user?.name || "User"}</span>
                       <a
-                        href={session?.user?.profileUrl || "/dashboard/overview"}
+                        href={session?.user?.profileUrl || "/dashboard"}
                         className="text-sm text-[#00d4ff]"
                         target={session?.user?.profileUrl ? "_blank" : undefined}
                         rel={session?.user?.profileUrl ? "noreferrer" : undefined}
@@ -118,7 +118,7 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={() => { setIsMenuOpen(false); signOut({ callbackUrl: "/" }); }}
-                        className="text-sm text-red-500 text-left mt-1 cursor-pointerhover:cursor-pointer"
+                        className="text-sm text-red-500 text-left mt-1 cursor-pointer hover:cursor-pointer"
                         aria-label="Sign out"
                       >
                         Sign out
@@ -135,7 +135,7 @@ export default function Navbar() {
                 {status !== "authenticated" && (
                   <>
                     <Link href="/login" className="font-medium text-[#00d4ff]" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                    <Link href="/dashboard/overview" className="inline-flex items-center justify-center rounded-md bg-[#00d4ff] text-white font-semibold px-4 py-2" onClick={() => setIsMenuOpen(false)}>Get Started Free</Link>
+                    <Link href="/dashboard" className="inline-flex items-center justify-center rounded-md bg-[#00d4ff] text-white font-semibold px-4 py-2" onClick={() => setIsMenuOpen(false)}>Get Started Free</Link>
                   </>
                 )}
               </div>
