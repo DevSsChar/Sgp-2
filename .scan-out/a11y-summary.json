@@ -1,0 +1,92 @@
+{
+  "pages": 50,
+  "byImpactNodes": {
+    "minor": 4,
+    "moderate": 463,
+    "serious": 231,
+    "critical": 12,
+    "needs-review": 12883
+  },
+  "byCategoryNodes": {
+    "perceivable": 13096,
+    "operable": 438,
+    "understandable": 4,
+    "robust": 55
+  },
+  "totalNodes": 13593,
+  "totalRules": 18,
+  "topRules": [
+    {
+      "rule": "color-contrast-incomplete-0",
+      "nodes": 12868
+    },
+    {
+      "rule": "region",
+      "nodes": 418
+    },
+    {
+      "rule": "color-contrast",
+      "nodes": 194
+    },
+    {
+      "rule": "landmark-no-duplicate-contentinfo",
+      "nodes": 24
+    },
+    {
+      "rule": "link-in-text-block",
+      "nodes": 21
+    },
+    {
+      "rule": "link-in-text-block-incomplete-1",
+      "nodes": 11
+    },
+    {
+      "rule": "meta-refresh",
+      "nodes": 11
+    },
+    {
+      "rule": "landmark-unique",
+      "nodes": 10
+    },
+    {
+      "rule": "scrollable-region-focusable",
+      "nodes": 10
+    },
+    {
+      "rule": "landmark-one-main",
+      "nodes": 9
+    },
+    {
+      "rule": "link-name",
+      "nodes": 4
+    },
+    {
+      "rule": "aria-allowed-role",
+      "nodes": 4
+    },
+    {
+      "rule": "aria-prohibited-attr-incomplete-0",
+      "nodes": 2
+    },
+    {
+      "rule": "aria-valid-attr-value-incomplete-1",
+      "nodes": 2
+    },
+    {
+      "rule": "heading-order",
+      "nodes": 2
+    },
+    {
+      "rule": "meta-viewport",
+      "nodes": 1
+    },
+    {
+      "rule": "object-alt",
+      "nodes": 1
+    },
+    {
+      "rule": "tabindex",
+      "nodes": 1
+    }
+  ]
+}
