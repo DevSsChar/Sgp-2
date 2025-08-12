@@ -2,6 +2,7 @@ import { Poppins, Roboto, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import SessionWrapper from "@/components/SessionWrapper";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -36,9 +37,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${roboto.variable} antialiased`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <SessionWrapper>
+          <Navbar />
+          {children}
+          <Footer />
+        </SessionWrapper>
       </body>
     </html>
   );

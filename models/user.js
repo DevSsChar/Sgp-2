@@ -1,74 +1,67 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-    FullName: {
-        type: String,
-        required: true,
+const UserSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    Email: {
-        type: String,
-        required: true,
-        unique: true,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      index: true,
+      trim: true,
     },
-    Age: {
-        type: Number,
+    imageUrl: {
+      type: String,
+      default: null,
     },
-    Location: {
-        type: String,
+    // Useful analytics
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
-    Degree: {
-        type: String,
+    lastLoginAt: {
+      type: Date,
+      default: null,
     },
-    Institution: {
-        type: String,
+    // Quick counters/pointers
+    scansCount: {
+      type: Number,
+      default: 0,
     },
-    GraduationYear: {
-        type: Number,
+    latestScan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ScanReport",
+      default: null,
     },
-    Grade: {
-        type: Number,
-    },
-    Company: {
-        type: String,
-    },
-    Position: {
-        type: String,
-    },
-    Duration: {
-        type: Date,
-    },
-    Description: {
-        type: String,
-    },
-    Skills: {
-        type: String,
-    },
-    SoftSKills: {
-        type: String,
-    },
-    Languages: {
-        type: String,
-    },
-    Interests: {
-        type: String,
-    },
-    // githubId: {
-    //     type: String,
-    //     unique: true,
-    // },
-    selectedCareers: {
-        type: [String],
-        default: [],
-    },
-    mobileVerified: {
-        type: Boolean,
-        default: false,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
+  },
+  { timestamps: true }
+);
+
+// Always keep email lowercase
+UserSchema.pre("save", function (next) {
+  if (this.isModified("email") && typeof this.email === "string") {
+    this.email = this.email.toLowerCase().trim();
+  }
+  next();
 });
+
+// Virtual: get all scans for this user without embedding large arrays
+UserSchema.virtual("scans", {
+  ref: "ScanReport",
+  localField: "_id",
+  foreignField: "user",
+  justOne: false,
+});
+
+// Ensure virtuals are included when converting to JSON/objects
+UserSchema.set("toJSON", { virtuals: true });
+UserSchema.set("toObject", { virtuals: true });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
