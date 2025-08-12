@@ -1,119 +1,79 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
-const ALL_IMPACTS = ["critical", "serious", "moderate", "minor"];
-const RULE_PRESETS = [
-  { id: "color-contrast", label: "Color contrast" },
-  { id: "image-alt", label: "Image alt" },
-  { id: "label", label: "Form label" },
-  { id: "heading-order", label: "Heading order" },
-  { id: "link-name", label: "Link name" },
-  { id: "button-name", label: "Button name" },
-];
-const DISABLE_RULE_PRESETS = [
-  { id: "region", label: "Region (no landmark)" },
-  { id: "landmark-one-main", label: "Single main landmark" },
-  { id: "page-has-heading-one", label: "Has H1" },
-];
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 function ImpactBadge({ impact }) {
-  const color =
-    impact === "critical"
-      ? "bg-red-100 text-red-700"
-      : impact === "serious"
-      ? "bg-orange-100 text-orange-700"
-      : impact === "moderate"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-gray-100 text-gray-700";
+  const getImpactStyles = () => {
+    switch (impact) {
+      case "critical":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "serious":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "moderate":
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      case "minor":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${color}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getImpactStyles()}`}>
       {impact || "needs-review"}
     </span>
   );
 }
 
-function Stat({ label, value }) {
+function StatCard({ label, value, icon }) {
   return (
-    <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-100 p-4">
-      <div className="text-xs text-gray-600">{label}</div>
-      <div className="mt-1 text-xl font-semibold text-gray-900">{value}</div>
+    <div className="rounded-xl bg-white shadow-md border border-gray-100 p-4 transition-all duration-300 hover:shadow-lg">
+      <div className="flex items-center gap-3">
+        {icon && (
+          <div className="rounded-full bg-[#00d4ff]/10 p-2 text-[#00d4ff]">
+            {icon}
+          </div>
+        )}
+        <div>
+          <div className="text-sm text-gray-600">{label}</div>
+          <div className="font-semibold text-2xl text-gray-900">{value}</div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default function ScannerPage() {
+export default function Scanner() {
   const [url, setUrl] = useState("");
-  const [profile, setProfile] = useState("accurate"); // 'fast' | 'accurate'
-  const [selectedImpacts, setSelectedImpacts] = useState(new Set(ALL_IMPACTS));
-  const [selectedRules, setSelectedRules] = useState(
-    new Set(["color-contrast", "image-alt", "heading-order", "label"])
-  );
-  const [disabledRules, setDisabledRules] = useState(new Set(["region", "landmark-one-main"]));
-  const [includeIncomplete, setIncludeIncomplete] = useState(true);
-  const [isScanning, setIsScanning] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [result, setResult] = useState(null);
-
-  const impactsArray = useMemo(() => Array.from(selectedImpacts), [selectedImpacts]);
-  const rulesArray = useMemo(() => Array.from(selectedRules), [selectedRules]);
-  const disableRulesArray = useMemo(() => Array.from(disabledRules), [disabledRules]);
-
-  function toggleSet(setter, currentSet, key) {
-    const next = new Set(currentSet);
-    if (next.has(key)) next.delete(key);
-    else next.add(key);
-    setter(next);
-  }
-
-  function setAllImpacts(on) {
-    setSelectedImpacts(on ? new Set(ALL_IMPACTS) : new Set());
-  }
-  function setAllRules(on) {
-    setSelectedRules(on ? new Set(RULE_PRESETS.map((r) => r.id)) : new Set());
-  }
-  function setAllDisableRules(on) {
-    setDisabledRules(on ? new Set(DISABLE_RULE_PRESETS.map((r) => r.id)) : new Set());
-  }
+  const [report, setReport] = useState(null);
+  const [activeTab, setActiveTab] = useState("summary");
 
   async function handleScan(e) {
-    e?.preventDefault?.();
+    e.preventDefault();
     setError("");
-    setResult(null);
-    if (!url || !/^https?:\/\//i.test(url)) {
+    setReport(null);
+    if (!/^https?:\/\//i.test(url)) {
       setError("Enter a valid URL starting with http(s)://");
       return;
     }
-    setIsScanning(true);
+    setLoading(true);
     try {
-      const body = {
-        url: url.trim(),
-        rules: rulesArray.length ? rulesArray : undefined,
-        disableRules: disableRulesArray.length ? disableRulesArray : undefined,
-        impacts: impactsArray.length ? impactsArray : undefined,
-        includeIncomplete,
-        headful: profile === "accurate",
-        waitMs: profile === "accurate" ? 4000 : 1500,
-        waitUntil: profile === "accurate" ? "networkidle" : "domcontentloaded",
-        timeoutMs: profile === "accurate" ? 45000 : 20000,
-      };
-
       const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ url: url.trim() }),
       });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(txt || `Scan failed with ${res.status}`);
-      }
+      if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError(err?.message || "Scan failed");
+      setReport(data);
+      setActiveTab("summary"); // Reset to summary tab
+    } catch (e) {
+      setError(e?.message || "Scan failed");
     } finally {
-      setIsScanning(false);
+      setLoading(false);
     }
   }
 
@@ -129,315 +89,440 @@ export default function ScannerPage() {
     URL.revokeObjectURL(href);
   }
 
-  const totalViolations = result?.violations?.length || 0;
-  const passedCount = result?.passed ?? 0;
-  const incompleteCount = result?.incomplete ?? 0;
-  const score = result?.score ?? (totalViolations ? Math.max(0, 100 - totalViolations * 10) : 100);
+  // Icons for stats
+  const pageIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.342a2 2 0 0 0-.602-1.43l-4.44-4.342A2 2 0 0 0 13.56 2H6a2 2 0 0 0-2 2z"></path>
+      <path d="M9 13h6"></path>
+      <path d="M9 17h3"></path>
+      <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+    </svg>
+  );
+
+  const nodeIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="8" height="8" rx="1"></rect>
+      <path d="M6 10v12"></path>
+      <path d="M10 6h12"></path>
+      <rect x="14" y="14" width="8" height="8" rx="1"></rect>
+    </svg>
+  );
+
+  const ruleIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m16 6 4 14"></path>
+      <path d="M12 6v14"></path>
+      <path d="M8 8v12"></path>
+      <path d="M4 4v16"></path>
+    </svg>
+  );
+
+  const reviewIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 8v4l3 3"></path>
+      <path d="M18.4 17A9 9 0 1 0 12 21a9 9 0 0 0 9-9V8l-3 3-3-3-3 3-3-3"></path>
+    </svg>
+  );
 
   return (
     <section className="mt-20 md:mt-24 min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-gray-50 text-gray-900">
-      <div className="max-w-5xl mx-auto px-6 py-8 md:py-10">
-        <header className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#00483a]">Accessibility Scanner</h1>
-          <p className="text-gray-700 mt-1">
-            Audit a page with axe. Choose Fast or Accurate mode and refine checks below.
-          </p>
-        </header>
-
-        <form
-          onSubmit={handleScan}
-          className="rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 p-5 md:p-6 space-y-5"
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
         >
-          <div>
-            <label className="block text-sm font-medium text-gray-800">URL to scan</label>
-            <input
-              type="url"
-              placeholder="https://mini-project-1-xi.vercel.app/dashboard"
-              className="mt-1 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-[#00d4ff] focus:border-transparent px-3 py-2 text-gray-900 placeholder-gray-400"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              required
-            />
-          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-[#00483a] mb-3">Accessibility Scanner</h1>
+          <p className="text-lg text-gray-700">
+            Scan your website for accessibility issues and get detailed reports on WCAG compliance.
+          </p>
+        </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="col-span-1">
-              <label className="block text-sm font-medium text-gray-800">Profile</label>
-              <div className="mt-2 inline-flex rounded-md border border-gray-300 overflow-hidden">
-                <button
-                  type="button"
-                  className={`px-3 py-2 text-sm ${
-                    profile === "fast" ? "bg-gray-900 text-white" : "bg-white text-gray-700"
-                  }`}
-                  onClick={() => setProfile("fast")}
-                  aria-pressed={profile === "fast"}
-                >
-                  Fast
-                </button>
-                <button
-                  type="button"
-                  className={`px-3 py-2 text-sm border-l border-gray-300 ${
-                    profile === "accurate" ? "bg-gray-900 text-white" : "bg-white text-gray-700"
-                  }`}
-                  onClick={() => setProfile("accurate")}
-                  aria-pressed={profile === "accurate"}
-                >
-                  Accurate
-                </button>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="rounded-2xl bg-white shadow-lg border border-gray-100 p-6 mb-10"
+        >
+          <form onSubmit={handleScan}>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="url-input" className="block text-sm font-medium text-gray-800 mb-1">
+                  Website URL to Scan
+                </label>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        <path d="M2 12h20"></path>
+                      </svg>
+                    </div>
+                    <input
+                      id="url-input"
+                      type="url"
+                      placeholder="https://example.com"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="w-full pl-10 rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-[#00d4ff] focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="sm:w-auto w-full rounded-lg bg-[#00d4ff] text-white font-semibold px-6 py-3 hover:bg-[#00d4ff]/90 disabled:opacity-60 transition-all duration-300 shadow-sm hover:shadow flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Scanning...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 12h20"></path>
+                          <path d="m17 7 5 5-5 5"></path>
+                          <path d="M7 7 2 12l5 5"></path>
+                        </svg>
+                        <span>Start Scan</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                {error && (
+                  <div className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
+                    <div className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      {error}
+                    </div>
+                  </div>
+                )}
               </div>
-              <p className="mt-2 text-xs text-gray-600">
-                Fast: headless, short waits. Accurate: headful-like waits (recommended).
-              </p>
             </div>
+          </form>
 
-            <fieldset className="col-span-1">
-              <legend className="block text-sm font-medium text-gray-800">Impacts</legend>
-              <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2">
-                {ALL_IMPACTS.map((imp) => (
-                  <label key={imp} className="inline-flex items-center gap-2 text-sm text-gray-800">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300"
-                      checked={selectedImpacts.has(imp)}
-                      onChange={() => toggleSet(setSelectedImpacts, selectedImpacts, imp)}
-                    />
-                    {imp}
-                  </label>
-                ))}
-              </div>
-              <div className="mt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setAllImpacts(true)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Select all
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAllImpacts(false)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Clear all
-                </button>
-              </div>
-            </fieldset>
-
-            <div className="col-span-1 flex items-end">
-              <label className="inline-flex items-center gap-2 text-sm text-gray-800">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300"
-                  checked={includeIncomplete}
-                  onChange={(e) => setIncludeIncomplete(e.target.checked)}
-                />
-                Include “incomplete” as needs-review
-              </label>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <fieldset>
-              <legend className="block text-sm font-medium text-gray-800">Only run rules</legend>
-              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2">
-                {RULE_PRESETS.map((r) => (
-                  <label key={r.id} className="inline-flex items-center gap-2 text-sm text-gray-800">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300"
-                      checked={selectedRules.has(r.id)}
-                      onChange={() => toggleSet(setSelectedRules, selectedRules, r.id)}
-                    />
-                    {r.label}
-                  </label>
-                ))}
-              </div>
-              <div className="mt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setAllRules(true)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Select all
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAllRules(false)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Clear all
-                </button>
-              </div>
-            </fieldset>
-
-            <fieldset>
-              <legend className="block text-sm font-medium text-gray-800">Disable rules</legend>
-              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2">
-                {DISABLE_RULE_PRESETS.map((r) => (
-                  <label key={r.id} className="inline-flex items-center gap-2 text-sm text-gray-800">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300"
-                      checked={disabledRules.has(r.id)}
-                      onChange={() => toggleSet(setDisabledRules, disabledRules, r.id)}
-                    />
-                    {r.label}
-                  </label>
-                ))}
-              </div>
-              <div className="mt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setAllDisableRules(true)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Select all
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAllDisableRules(false)}
-                  className="text-xs text-[#00d4ff] hover:underline"
-                >
-                  Clear all
-                </button>
-              </div>
-            </fieldset>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={isScanning}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/90 disabled:opacity-60 h-10 px-4"
-            >
-              {isScanning ? (
-                <>
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4A4 4 0 008 12H4z" />
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-gray-700">Guidelines</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-green-500 shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
                   </svg>
-                  Scanning…
-                </>
-              ) : (
-                "Run Scan"
-              )}
-            </button>
-
-            {result && (
-              <button
-                type="button"
-                onClick={() =>
-                  downloadJson(
-                    result,
-                    `accessibility-report-${new Date().toISOString().slice(0, 10)}.json`
-                  )
-                }
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 text-gray-800 hover:bg-gray-50 h-10 px-4"
-              >
-                Download JSON
-              </button>
-            )}
-          </div>
-
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        </form>
-
-        {result && (
-          <div className="mt-8 space-y-6">
-            <div className="grid sm:grid-cols-4 gap-4">
-              <Stat label="Score" value={score} />
-              <Stat label="Violations" value={result?.violations?.length ?? 0} />
-              <Stat label="Passed" value={passedCount} />
-              <Stat label="Incomplete" value={incompleteCount} />
+                  <span>Public URLs only (no auth unless preconfigured)</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-green-500 shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>We wait for network idle and 4s extra to reduce false "incomplete" results</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-green-500 shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>"Incomplete" checks are included as needs-review</span>
+                </li>
+              </ul>
             </div>
+            
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-gray-700">Limitations</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-amber-500 shrink-0">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>Cross-origin iframes and canvas aren't analyzed</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-amber-500 shrink-0">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>Highly dynamic content may still need manual review</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                       className="mt-0.5 text-amber-500 shrink-0">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>Large sites may need higher page limits or more time</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
 
-            <div className="rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Violations</h2>
-                <span className="text-sm text-gray-600">
-                  {result?.url ? new URL(result.url).pathname : ""}
-                </span>
+        {report && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+          >
+            <div className="rounded-xl bg-white shadow-lg border border-gray-100 p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-6">
+                <div>
+                  <div className="text-sm text-gray-600">Report ID</div>
+                  <div className="font-mono text-sm">{report.reportId}</div>
+                </div>
+                <div className="sm:text-right">
+                  <div className="text-sm text-gray-600">Base URL</div>
+                  <div className="font-medium text-gray-900 break-all">{report.baseUrl}</div>
+                </div>
               </div>
 
-              {totalViolations === 0 ? (
-                <p className="text-gray-700">No violations found.</p>
-              ) : (
-                <ul className="divide-y divide-gray-100">
-                  {result.violations.map((v, i) => (
-                    <li key={`${v.id}-${i}`} className="py-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <ImpactBadge impact={v.impact} />
-                            <span className="font-medium text-gray-900">{v.id}</span>
-                          </div>
-                          <p className="text-sm text-gray-800 mt-1">{v.description}</p>
-                          <a
-                            href={v.helpUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-sm text-[#00d4ff] hover:underline"
-                          >
-                            {v.help}
-                          </a>
-                          {Array.isArray(v.tags) && v.tags.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-1">
-                              {v.tags.slice(0, 6).map((t) => (
-                                <span
-                                  key={t}
-                                  className="inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-gray-100 text-gray-700"
-                                >
-                                  {t}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-right shrink-0 text-sm text-gray-600">
-                          {v.nodes?.length ?? 0} nodes
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <StatCard 
+                  label="Pages Scanned" 
+                  value={report.summary?.pages ?? 0} 
+                  icon={pageIcon}
+                />
+                <StatCard 
+                  label="Affected Nodes" 
+                  value={report.summary?.totalNodes ?? 0} 
+                  icon={nodeIcon}
+                />
+                <StatCard 
+                  label="Distinct Rules" 
+                  value={report.summary?.totalRules ?? 0} 
+                  icon={ruleIcon}
+                />
+                <StatCard 
+                  label="Needs Review" 
+                  value={report.summary?.byImpactNodes?.["needs-review"] ?? 0} 
+                  icon={reviewIcon}
+                />
+              </div>
+
+              {Array.isArray(report.summary?.topRules) && report.summary.topRules.length > 0 && (
+                <div className="mt-6">
+                  <div className="text-sm font-medium text-gray-700 mb-3">Top Rules (by affected nodes)</div>
+                  <div className="flex flex-wrap gap-2">
+                    {report.summary.topRules.slice(0, 8).map((r) => (
+                      <span key={r.rule} className="inline-flex items-center gap-2 rounded-full bg-gray-100 text-gray-800 text-xs px-3 py-1.5 border border-gray-200">
+                        <span className="font-mono">{r.rule}</span>
+                        <span className="bg-white text-gray-600 rounded-full px-1.5 py-0.5 text-xs border border-gray-200">{r.nodes}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => downloadJson(report, `a11y-report-${new Date().toISOString().slice(0,10)}.json`)}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 px-4 py-2 text-sm font-medium transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download JSON
+                </button>
+              </div>
+            </div>
+
+            {Array.isArray(report.pages) && report.pages.length > 0 && (
+              <div className="space-y-6">
+                <div className="rounded-xl bg-white shadow-lg border border-gray-100 p-6">
+                  <div className="border-b border-gray-100 pb-4 mb-4">
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-lg font-semibold text-gray-900">Scanned Pages</h2>
+                      <div className="text-sm text-gray-600">Total: {report.pages.length}</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {report.pages.map((p, idx) => {
+                      const id = `page-${idx}`;
+                      const label = (() => { try { return new URL(p.url).pathname || p.url; } catch { return p.url; } })();
+                      return (
+                        <a 
+                          key={p.url || id} 
+                          href={`#${id}`} 
+                          className="inline-flex items-center rounded-full bg-gray-100 border border-gray-200 px-4 py-1.5 text-sm text-gray-800 hover:bg-gray-200 transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                               className="mr-1.5 text-gray-500">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                          </svg>
+                          {label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {report.pages.map((p, idx) => {
+                  const id = `page-${idx}`;
+                  const path = (() => { try { return new URL(p.url).pathname || p.url; } catch { return p.url; } })();
+                  const violations = p.violations || [];
+                  
+                  return (
+                    <section key={p.url || id} id={id} className="rounded-xl bg-white shadow-lg border border-gray-100 p-6 scroll-mt-24">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-100 pb-4 mb-4">
+                        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                               className="text-gray-500">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                          </svg>
+                          {path}
+                        </h2>
+                        <div className="text-sm text-gray-600 flex items-center gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                               className="text-gray-400">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          {p.scannedAt ? new Date(p.scannedAt).toLocaleString() : ""}
                         </div>
                       </div>
 
-                      {Array.isArray(v.nodes) && v.nodes.length > 0 && (
-                        <details className="mt-3">
-                          <summary className="cursor-pointer text-sm text-gray-800">
-                            View affected nodes
-                          </summary>
-                          <div className="mt-2 space-y-3">
-                            {v.nodes.slice(0, 5).map((n, ni) => (
-                              <div
-                                key={ni}
-                                className="rounded-md bg-gray-50 border border-gray-200 p-3 text-sm"
-                              >
-                                <div className="text-gray-900">
-                                  <span className="font-mono text-xs bg-white border px-1 py-0.5 rounded">
-                                    {(n.target || []).join(", ")}
-                                  </span>
-                                </div>
-                                {n.failureSummary && (
-                                  <p className="mt-1 text-gray-800">{n.failureSummary}</p>
-                                )}
-                                {n.html && (
-                                  <pre className="mt-2 overflow-auto rounded bg-white border p-2 text-xs text-gray-900">
-                                    {n.html}
-                                  </pre>
-                                )}
-                              </div>
-                            ))}
-                            {v.nodes.length > 5 && (
-                              <p className="text-xs text-gray-600">
-                                +{v.nodes.length - 5} more nodes not shown
-                              </p>
-                            )}
+                      {violations.length === 0 ? (
+                        <div className="flex items-center justify-center p-8 text-center">
+                          <div>
+                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-500 mb-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                              </svg>
+                            </div>
+                            <p className="text-gray-700 font-medium">No accessibility issues found on this page.</p>
+                            <p className="text-gray-500 text-sm mt-1">This page appears to meet accessibility standards.</p>
                           </div>
-                        </details>
+                        </div>
+                      ) : (
+                        <ul className="divide-y divide-gray-100">
+                          {violations.map((v, vi) => (
+                            <li key={`${p.url || id}-${v.id}-${vi}`} className="py-4 first:pt-0 last:pb-0">
+                              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                                <div className="flex-1">
+                                  <div className="flex items-center flex-wrap gap-2 mb-2">
+                                    <ImpactBadge impact={v.impact} />
+                                    <span className="font-medium text-gray-900">{v.id}</span>
+                                  </div>
+                                  <p className="text-sm text-gray-800 mb-2">{v.description}</p>
+                                  <a href={v.helpUrl} target="_blank" rel="noreferrer" 
+                                     className="inline-flex items-center gap-1.5 text-sm text-[#00d4ff] hover:underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                                      <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                    </svg>
+                                    {v.help}
+                                  </a>
+                                  {Array.isArray(v.tags) && v.tags.length > 0 && (
+                                    <div className="mt-3 flex flex-wrap gap-1.5">
+                                      {v.tags.slice(0, 6).map((t) => (
+                                        <span key={`${v.id}-${t}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700 border border-gray-200">
+                                          {t}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="shrink-0 flex items-center justify-center bg-gray-100 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-200">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                       className="mr-1.5 text-gray-500">
+                                    <rect x="2" y="2" width="8" height="8" rx="2"></rect>
+                                    <rect x="14" y="2" width="8" height="8" rx="2"></rect>
+                                    <rect x="2" y="14" width="8" height="8" rx="2"></rect>
+                                    <rect x="14" y="14" width="8" height="8" rx="2"></rect>
+                                  </svg>
+                                  {v.nodes?.length ?? 0} nodes
+                                </div>
+                              </div>
+                              
+                              {Array.isArray(v.nodes) && v.nodes.length > 0 && (
+                                <details className="mt-4 group">
+                                  <summary className="cursor-pointer text-sm font-medium flex items-center gap-2 text-gray-700 hover:text-gray-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                         className="text-gray-500 group-open:rotate-90 transition-transform">
+                                      <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                    View affected nodes ({v.nodes.length})
+                                  </summary>
+                                  <div className="mt-3 space-y-3 pl-6 border-l-2 border-gray-100">
+                                    {v.nodes.slice(0, 5).map((n, ni) => (
+                                      <div key={`${p.url || id}-${v.id}-${(n.target || []).join('|')}-${ni}`} 
+                                           className="rounded-lg border border-gray-200 overflow-hidden">
+                                        <div className="bg-gray-50 p-3 border-b border-gray-200">
+                                          <div className="font-mono text-xs px-2 py-1 rounded bg-white border border-gray-200 inline-block">
+                                            {(n.target || []).join(", ")}
+                                          </div>
+                                        </div>
+                                        {n.failureSummary && (
+                                          <div className="p-3 text-sm text-gray-800">
+                                            {n.failureSummary}
+                                          </div>
+                                        )}
+                                        {n.html && (
+                                          <div className="p-3 pt-0">
+                                            <pre className="bg-gray-50 border rounded p-3 text-xs overflow-auto max-h-48 font-mono">
+                                              {n.html}
+                                            </pre>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                    {v.nodes.length > 5 && (
+                                      <div className="text-sm text-gray-600 py-2">
+                                        +{v.nodes.length - 5} more nodes not shown
+                                      </div>
+                                    )}
+                                  </div>
+                                </details>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
                       )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+          </motion.div>
         )}
       </div>
     </section>

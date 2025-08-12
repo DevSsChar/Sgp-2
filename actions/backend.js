@@ -11,6 +11,7 @@ const { crawl } = require("./lib/crawler");
 const { createBrowser, withPage, renderAndGetLinks, runAxe } = require("./lib/scanner");
 const { buildPageDoc, buildSummary } = require("./lib/reporter");
 const ScanReport = require("../models/scanReport");
+const { randomBytes } = require("crypto");
 
 function getArg(name, def) {
   const argv = process.argv;
@@ -45,6 +46,8 @@ function getArg(name, def) {
   const disableRules = String(getArg("--disable-rules", "")).split(",").map(s=>s.trim()).filter(Boolean);
   const includeIncomplete = getArg("--include-incomplete", "true") !== "false";
   const jsonOut = String(getArg("--json", "")).trim();
+  const userId = String(getArg("--user-id", "")).trim() || undefined;
+  const reportId = `scan_${Date.now()}_${randomBytes(4).toString("hex")}`;
 
   await connect();
   const browser = await createBrowser({ headless: false });
@@ -88,35 +91,30 @@ function getArg(name, def) {
   await Promise.all(workers);
   await browser.close().catch(()=>{});
 
-  // Save to DB per ScanReport schema
-  const ops = pageDocs.map((doc) => ({
-    insertOne: {
-      document: {
-        url: doc.url,
-        violations: doc.violations,
-        scannedAt: new Date(),
-        meta: doc.meta,
-      },
-    },
-  }));
-  if (ops.length) {
-    await ScanReport.collection.bulkWrite(ops, { ordered: false });
-    console.log(`[db] inserted ${ops.length} report(s)`);
-  }
+  // Aggregate and save a single report document
+  const summary = buildSummary(pageDocs);
+  const reportDoc = await ScanReport.create({
+    reportId,
+    user: userId,
+    baseUrl: startUrl,
+    startedAt: new Date(),
+    finishedAt: new Date(),
+    pages: pageDocs,
+    summary,
+  });
 
   // Build simple summary JSON
-  const summary = buildSummary(pageDocs);
 
   if (jsonOut) {
     const outDir = path.isAbsolute(jsonOut) ? jsonOut : path.resolve(process.cwd(), jsonOut);
     fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, "a11y-pages.json"), JSON.stringify(pageDocs, null, 2));
+    fs.writeFileSync(path.join(outDir, "a11y-report.json"), JSON.stringify(reportDoc.toObject ? reportDoc.toObject() : reportDoc, null, 2));
     fs.writeFileSync(path.join(outDir, "a11y-summary.json"), JSON.stringify(summary, null, 2));
     console.log(`[json] written to ${outDir}`);
   }
 
   const dt = ((Date.now() - t0) / 1000).toFixed(1);
-  console.log(`[done] scanned ${pageDocs.length} page(s) in ${dt}s`);
+  console.log(`[done] reportId=${reportId} pages=${pageDocs.length} in ${dt}s`);
   await close();
   process.exit(0);
 })().catch(async (e) => {
