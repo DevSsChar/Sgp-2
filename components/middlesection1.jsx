@@ -102,13 +102,13 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 bg-gray-50">
+    <section id="features" className="py-24 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-poppins text-4xl md:text-5xl font-bold text-[#00483a] mb-6">
-            Features That Protect <span className="text-cyan-400">Your</span> Business
+          <h2 className="font-poppins text-4xl md:text-5xl font-bold text-[#00483a] dark:text-[#38bdf8] mb-6">
+            Features That Protect <span className="text-cyan-400 dark:text-cyan-300">Your</span> Business
           </h2>
-          <p className="font-roboto text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-roboto text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Comprehensive accessibility compliance tools designed to keep you legal and inclusive
           </p>
         </div>
@@ -117,16 +117,16 @@ export default function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="rounded-lg shadow-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2 bg-white"
+              className="rounded-lg shadow-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2 bg-white dark:bg-gray-800"
               style={{ animationDelay: feature.animationDelay }}
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-50 shadow-md mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-white dark:from-gray-700 to-gray-50 dark:to-gray-800 shadow-md mb-6">
                 {feature.icon}
               </div>
-              <h3 className="font-poppins text-xl font-semibold text-[#00483a] mb-4">
+              <h3 className="font-poppins text-xl font-semibold text-[#00483a] dark:text-[#38bdf8] mb-4">
                 {feature.title}
               </h3>
-              <p className="font-roboto text-gray-600 leading-relaxed">
+              <p className="font-roboto text-gray-600 dark:text-gray-300 leading-relaxed">
                 {feature.description}
               </p>
             </div>
@@ -134,10 +134,10 @@ export default function Features() {
         </div>
 
         <div className="text-center">
-          <button className="inline-flex items-center justify-center gap-2 bg-[#00483a] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:bg-[#00483a]/80 hover:scale-105">
+          <button className="inline-flex items-center justify-center gap-2 bg-[#00483a] dark:bg-[#38bdf8] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:bg-[#00483a]/80 dark:hover:bg-[#38bdf8]/80 hover:scale-105">
             Start Free Scan
           </button>
-          <p className="font-roboto text-sm text-gray-500 mt-4">
+          <p className="font-roboto text-sm text-gray-500 dark:text-gray-400 mt-4">
             No credit card required • Get results in under 2 minutes
           </p>
         </div>

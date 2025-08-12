@@ -1,0 +1,123 @@
+/* Dark Mode Overrides */
+
+/* Base styling */
+.dark body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Card styling */
+.dark .bg-white {
+  background-color: var(--card-bg);
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: var(--card-border);
+}
+
+.dark .text-gray-900 {
+  color: #f1f5f9;
+}
+
+.dark .text-gray-800 {
+  color: #f1f5f9;
+}
+
+.dark .text-gray-700 {
+  color: #e2e8f0;
+}
+
+.dark .text-gray-600 {
+  color: #cbd5e1;
+}
+
+.dark .text-gray-500 {
+  color: #94a3b8;
+}
+
+/* Input styling */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: #f1f5f9;
+}
+
+/* Button styling */
+.dark .bg-\[\#00d4ff\] {
+  background-color: #38bdf8;
+}
+
+.dark .hover\:bg-\[\#00d4ff\]\/90:hover {
+  background-color: rgba(56, 189, 248, 0.9);
+}
+
+.dark .text-\[\#00483a\] {
+  color: #0ea5e9;
+}
+
+/* StatCard styling */
+.dark .bg-\[\#00d4ff\]\/10 {
+  background-color: rgba(56, 189, 248, 0.1);
+}
+
+.dark .hover\:bg-\[\#00d4ff\]\/20:hover {
+  background-color: rgba(56, 189, 248, 0.2);
+}
+
+/* Shadow adjustments */
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Status colors */
+.dark .bg-red-100 {
+  background-color: rgba(220, 38, 38, 0.2);
+}
+
+.dark .text-red-800 {
+  color: #fca5a5;
+}
+
+.dark .bg-orange-100 {
+  background-color: rgba(234, 88, 12, 0.2);
+}
+
+.dark .text-orange-800 {
+  color: #fdba74;
+}
+
+.dark .bg-amber-100 {
+  background-color: rgba(217, 119, 6, 0.2);
+}
+
+.dark .text-amber-800 {
+  color: #fcd34d;
+}
+
+.dark .bg-yellow-100 {
+  background-color: rgba(202, 138, 4, 0.2);
+}
+
+.dark .text-yellow-800 {
+  color: #fde047;
+}
+
+.dark .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.dark .text-blue-700 {
+  color: #93c5fd;
+}
+
+/* Gradients */
+.dark .bg-gradient-to-b.from-white.to-gray-50 {
+  background: linear-gradient(180deg, var(--background) 0%, #1a2234 100%);
+}

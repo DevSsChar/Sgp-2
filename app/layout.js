@@ -1,5 +1,6 @@
 import { Poppins, Roboto, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./dark-mode.css";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import SessionWrapper from "@/components/SessionWrapper";
@@ -33,9 +34,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${roboto.variable} antialiased`}
+        suppressHydrationWarning
       >
         <SessionWrapper>
           <Navbar />

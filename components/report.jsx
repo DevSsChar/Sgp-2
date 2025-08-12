@@ -8,15 +8,15 @@ function ImpactBadge({ impact }) {
   const getImpactStyles = () => {
     switch (impact) {
       case "critical":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800";
       case "serious":
-        return "bg-orange-100 text-orange-800 border-orange-200";
+        return "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800";
       case "moderate":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800";
       case "minor":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600";
     }
   };
 
@@ -29,36 +29,36 @@ function ImpactBadge({ impact }) {
 
 function StatCard({ label, value, icon, variant = "default" }) {
   const variants = {
-    default: "bg-white border-gray-100 shadow-sm",
-    critical: "bg-red-50 border-red-100",
-    serious: "bg-orange-50 border-orange-100",
-    moderate: "bg-amber-50 border-amber-100",
-    minor: "bg-yellow-50 border-yellow-100",
-    review: "bg-gray-50 border-gray-100",
-    success: "bg-green-50 border-green-100"
+    default: "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm",
+    critical: "bg-red-50 dark:bg-red-900/30 border-red-100 dark:border-red-800",
+    serious: "bg-orange-50 dark:bg-orange-900/30 border-orange-100 dark:border-orange-800",
+    moderate: "bg-amber-50 dark:bg-amber-900/30 border-amber-100 dark:border-amber-800",
+    minor: "bg-yellow-50 dark:bg-yellow-900/30 border-yellow-100 dark:border-yellow-800",
+    review: "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700",
+    success: "bg-green-50 dark:bg-green-900/30 border-green-100 dark:border-green-800"
   };
 
   const iconColors = {
-    default: "text-[#00d4ff]",
-    critical: "text-red-500",
-    serious: "text-orange-500",
-    moderate: "text-amber-500",
-    minor: "text-yellow-500",
-    review: "text-gray-500",
-    success: "text-green-500"
+    default: "text-[#00d4ff] dark:text-[#38bdf8]",
+    critical: "text-red-500 dark:text-red-400",
+    serious: "text-orange-500 dark:text-orange-400",
+    moderate: "text-amber-500 dark:text-amber-400",
+    minor: "text-yellow-500 dark:text-yellow-400",
+    review: "text-gray-500 dark:text-gray-400",
+    success: "text-green-500 dark:text-green-400"
   };
 
   return (
     <div className={`rounded-xl ${variants[variant]} border p-4 transition-all duration-300 hover:shadow-md block`}>
       <div className="flex items-center gap-3">
         {icon && (
-          <div className={`rounded-full bg-white/60 p-2 ${iconColors[variant]}`}>
+          <div className={`rounded-full bg-white/60 dark:bg-gray-700/60 p-2 ${iconColors[variant]}`}>
             {icon}
           </div>
         )}
         <div>
-          <div className="text-sm text-gray-600">{label}</div>
-          <div className="font-semibold text-2xl text-gray-900">{value}</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">{label}</div>
+          <div className="font-semibold text-2xl text-gray-900 dark:text-white">{value}</div>
         </div>
       </div>
     </div>
@@ -227,10 +227,10 @@ export default function ReportDetailPage() {
   const violationStats = getViolationStats();
 
   return (
-    <section className="mt-20 md:mt-24 min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-gray-50 text-gray-900">
+    <section className="mt-20 md:mt-24 min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white dark:from-gray-900 to-gray-50 dark:to-gray-950 text-gray-900 dark:text-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700 flex items-center gap-3">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6 text-red-700 dark:text-red-300 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -244,8 +244,8 @@ export default function ReportDetailPage() {
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00d4ff]"></div>
-              <p className="mt-4 text-gray-600">Loading report details...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00d4ff] dark:border-[#38bdf8]"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading report details...</p>
             </div>
           </div>
         ) : !report ? (
@@ -297,7 +297,7 @@ export default function ReportDetailPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/scanner" 
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 px-4 py-2 text-sm font-medium transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 text-sm font-medium transition-colors"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -319,7 +319,7 @@ export default function ReportDetailPage() {
                     a.remove();
                     URL.revokeObjectURL(href);
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00d4ff] text-white px-4 py-2 text-sm font-medium hover:bg-[#00d4ff]/90 transition-colors shadow-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00d4ff] dark:bg-[#38bdf8] text-white px-4 py-2 text-sm font-medium hover:bg-[#00d4ff]/90 dark:hover:bg-[#38bdf8]/90 transition-colors shadow-sm"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -336,16 +336,16 @@ export default function ReportDetailPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden"
+              className="rounded-xl bg-white dark:bg-gray-800 shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden"
             >
-              <div className="border-b border-gray-100">
+              <div className="border-b border-gray-100 dark:border-gray-700">
                 <div className="flex overflow-x-auto">
                   <button
                     onClick={() => setActiveTab("summary")}
                     className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
                       activeTab === "summary" 
-                        ? "text-[#00483a] border-b-2 border-[#00483a]" 
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "text-[#00483a] dark:text-[#38bdf8] border-b-2 border-[#00483a] dark:border-[#38bdf8]" 
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
                     Summary

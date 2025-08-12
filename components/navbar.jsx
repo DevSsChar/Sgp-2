@@ -2,37 +2,41 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react"; // added signOut
+import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "./ThemeContext";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { data: session, status } = useSession(); // added
+  const { darkMode } = useTheme();
 
   useEffect(() => setMounted(true), []);
 
   const toggleMenu = () => setIsMenuOpen((v) => !v);
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+    <nav className={`${darkMode ? 'bg-gray-900/95 text-white border-gray-700' : 'bg-white/95 text-gray-800 border-gray-200'} backdrop-blur-sm border-b fixed top-0 left-0 right-0 z-50 transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-poppins text-xl font-bold text-blue-600">
+          <Link href="/" className={`font-poppins text-xl font-bold ${darkMode ? 'text-[#00d4ff]' : 'text-blue-600'}`}>
             AccessibilityGuard
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#features">Features</Link>
-            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#how-it-works">How It Works</Link>
-            <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="#about">About</Link>
+            <Link className={`font-roboto hover:text-[#00d4ff] transition-colors font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} href="#features">Features</Link>
+            <Link className={`font-roboto hover:text-[#00d4ff] transition-colors font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} href="#how-it-works">How It Works</Link>
+            <Link className={`font-roboto hover:text-[#00d4ff] transition-colors font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} href="#about">About</Link>
             {status === "authenticated" && (
-              <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="/history">History</Link>
+              <Link className={`font-roboto hover:text-[#00d4ff] transition-colors font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} href="/history">History</Link>
             )}
             {status === "authenticated" && (
-              <Link className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" href="/scanner">Scanner</Link>
+              <Link className={`font-roboto hover:text-[#00d4ff] transition-colors font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} href="/scanner">Scanner</Link>
             )}
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
+            <ThemeToggle className="mr-2" />
             {status === "authenticated" ? (
               <>
                 {session?.user?.image && (
@@ -43,7 +47,7 @@ export default function Navbar() {
                   />
                 )}
                 <div className="flex flex-col items-end leading-tight">
-                  <span className="font-poppins text-sm text-gray-700">
+                  <span className={`font-poppins text-sm ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                     {session?.user?.name || "User"}
                   </span>
                   <div className="flex items-center gap-3">

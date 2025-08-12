@@ -81,13 +81,13 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-white">
+    <section id="how-it-works" className="py-24 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-poppins text-4xl md:text-5xl font-bold text-[#00483a] mb-6">
-            How It <span className="text-cyan-400">Works</span>
+          <h2 className="font-poppins text-4xl md:text-5xl font-bold text-[#00483a] dark:text-[#38bdf8] mb-6">
+            How It <span className="text-cyan-400 dark:text-cyan-300">Works</span>
           </h2>
-          <p className="font-roboto text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-roboto text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Three simple steps to complete accessibility compliance
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function HowItWorks() {
             {steps.map((step, index) => (
               <div 
                 key={index}
-                className="rounded-lg text-card-foreground shadow-sm text-center p-8 bg-white hover:shadow-lg transition-all duration-300 border-0"
+                className="rounded-lg text-card-foreground shadow-sm text-center p-8 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 border-0"
               >
                 {/* Step number circle with different colors */}
                 <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${step.bgColor} text-white font-poppins font-bold text-2xl mb-6 mx-auto shadow-md`}>
@@ -108,14 +108,14 @@ export default function HowItWorks() {
                 </div>
                 
                 {/* Icon circle */}
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 mb-6">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 mb-6">
                   {step.icon}
                 </div>
                 
-                <h3 className="font-poppins text-2xl font-semibold text-[#00483a] mb-4">
+                <h3 className="font-poppins text-2xl font-semibold text-[#00483a] dark:text-[#38bdf8] mb-4">
                   {step.title}
                 </h3>
-                <p className="font-roboto text-gray-600 leading-relaxed">
+                <p className="font-roboto text-gray-600 dark:text-gray-300 leading-relaxed">
                   {step.description}
                 </p>
               </div>
@@ -124,7 +124,7 @@ export default function HowItWorks() {
         </div>
 
         <div className="text-center mt-16">
-          <button className="inline-flex items-center justify-center gap-2 bg-cyan-400 text-white font-semibold hover:bg-cyan-500 shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4">
+          <button className="inline-flex items-center justify-center gap-2 bg-cyan-400 dark:bg-cyan-500 text-white font-semibold hover:bg-cyan-500 dark:hover:bg-cyan-600 shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4">
             See It In Action
           </button>
         </div>
