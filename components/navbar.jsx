@@ -93,7 +93,7 @@ export default function Navbar() {
               width="24" height="24" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" strokeWidth="2"
               strokeLinecap="round" strokeLinejoin="round"
-              className="lucide lucide-menu h-6 w-6 text-gray-600"
+              className={`lucide lucide-menu h-6 w-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
             >
               <line x1="4" x2="20" y1="12" y2="12" />
               <line x1="4" x2="20" y1="6" y2="6" />
@@ -102,10 +102,10 @@ export default function Navbar() {
           </button>
 
           {mounted && isMenuOpen && (
-            <div id="mobile-nav" className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg p-4">
+            <div id="mobile-nav" className={`md:hidden absolute top-16 left-0 right-0 ${darkMode ? 'bg-gray-800 shadow-lg' : 'bg-white shadow-lg'} p-4`}>
               <div className="flex flex-col space-y-4">
                 {status === "authenticated" && (
-                  <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
+                  <div className={`flex items-center gap-3 pb-2 ${darkMode ? 'border-gray-700' : 'border-gray-100'} border-b`}>
                     {session?.user?.image && (
                       <img
                         src={session.user.image}
@@ -114,7 +114,7 @@ export default function Navbar() {
                       />
                     )}
                     <div className="flex flex-col">
-                      <span className="font-medium text-gray-800">{session?.user?.name || "User"}</span>
+                      <span className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>{session?.user?.name || "User"}</span>
                       <a
                         href={session?.user?.profileUrl || "/dashboard"}
                         className="text-sm text-[#00d4ff]"
@@ -136,10 +136,10 @@ export default function Navbar() {
                   </div>
                 )}
 
-                <Link href="#features" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>Features</Link>
-                <Link href="#how-it-works" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
-                <Link href="#pricing" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
-                <Link href="#about" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>About</Link>
+                <Link href="#features" className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-[#00d4ff] transition-colors font-medium`} onClick={() => setIsMenuOpen(false)}>Features</Link>
+                <Link href="#how-it-works" className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-[#00d4ff] transition-colors font-medium`} onClick={() => setIsMenuOpen(false)}>How It Works</Link>
+                <Link href="#pricing" className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-[#00d4ff] transition-colors font-medium`} onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+                <Link href="#about" className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-[#00d4ff] transition-colors font-medium`} onClick={() => setIsMenuOpen(false)}>About</Link>
 
                 {status !== "authenticated" && (
                   <>
@@ -148,7 +148,7 @@ export default function Navbar() {
                   </>
                 )}
                 {status === "authenticated" && (
-                  <Link href="/history" className="font-roboto text-gray-600 hover:text-[#00d4ff] transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>History</Link>
+                  <Link href="/history" className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-[#00d4ff] transition-colors font-medium`} onClick={() => setIsMenuOpen(false)}>History</Link>
                 )}
               </div>
             </div>

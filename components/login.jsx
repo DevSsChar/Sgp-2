@@ -3,9 +3,11 @@ import React from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTheme } from './ThemeContext';
 
 const LoginPage = () => {
     const router = useRouter();
+    const { darkMode } = useTheme();
 
     const handleGoogleSignIn = () => {
         signIn('google', { callbackUrl: '/dashboard' });
@@ -16,8 +18,8 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[hsla(221,62%,79%,0)] to-white mt-18">
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
+        <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-[hsla(221,62%,79%,0)] to-white'} mt-18`}>
+            <div className={`w-full max-w-md p-8 space-y-8 ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg`}>
                 <div className="text-center">
                     <Link href="/" className="inline-flex items-center gap-2 mb-8">
                         <div className="h-8 w-8 rounded-lg bg-[hsla(221,83%,53%,0.1)] flex items-center justify-center">
@@ -25,14 +27,14 @@ const LoginPage = () => {
                         </div>
                         <span className="text-xl font-medium text-[hsla(221,83%,53%,1)]">Accessibility Guard</span>
                     </Link>
-                    <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-                    <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
+                    <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Welcome back</h2>
+                    <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Sign in to your account to continue</p>
                 </div>
 
                 <div className="mt-8 space-y-4">
                     <button
                         onClick={handleGoogleSignIn}
-                        className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[hsla(221,83%,53%,1)] cursor-pointer"
+                        className={`w-full flex items-center justify-center gap-3 py-2 px-4 border ${darkMode ? 'border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'} rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[hsla(221,83%,53%,1)] cursor-pointer`}
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path
@@ -57,7 +59,7 @@ const LoginPage = () => {
 
                     <button
                         onClick={handleGithubSignIn}
-                        className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[hsla(221,83%,53%,1)] cursor-pointer"
+                        className={`w-full flex items-center justify-center gap-3 py-2 px-4 border ${darkMode ? 'border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'} rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[hsla(221,83%,53%,1)] cursor-pointer`}
                     >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -70,7 +72,7 @@ const LoginPage = () => {
                     </button>
                 </div>
 
-                <p className="mt-8 text-center text-sm text-gray-600">
+                <p className={`mt-8 text-center text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     Don&apos;t have an account?{' '}
                     <Link href="/login" className="font-medium text-[hsla(221,83%,53%,1)] hover:text-[hsla(221,83%,53%,0.8)]">
                         Sign up

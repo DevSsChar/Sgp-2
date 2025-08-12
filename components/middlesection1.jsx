@@ -1,7 +1,9 @@
 "use client";
 import React from 'react';
+import { useTheme } from './ThemeContext';
 
 export default function Features() {
+  const { darkMode } = useTheme();
   const features = [
     {
       icon: (
@@ -102,13 +104,13 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 bg-gray-50 dark:bg-gray-900">
+    <section id="features" className={`py-24 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-poppins text-4xl md:text-5xl font-bold text-[#00483a] dark:text-[#38bdf8] mb-6">
-            Features That Protect <span className="text-cyan-400 dark:text-cyan-300">Your</span> Business
+          <h2 className={`font-poppins text-4xl md:text-5xl font-bold ${darkMode ? 'text-[#38bdf8]' : 'text-[#00483a]'} mb-6`}>
+            Features That Protect <span className={`${darkMode ? 'text-cyan-300' : 'text-cyan-400'}`}>Your</span> Business
           </h2>
-          <p className="font-roboto text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className={`font-roboto text-xl ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
             Comprehensive accessibility compliance tools designed to keep you legal and inclusive
           </p>
         </div>
@@ -117,16 +119,16 @@ export default function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="rounded-lg shadow-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2 bg-white dark:bg-gray-800"
+              className={`rounded-lg shadow-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
               style={{ animationDelay: feature.animationDelay }}
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-white dark:from-gray-700 to-gray-50 dark:to-gray-800 shadow-md mb-6">
+              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${darkMode ? 'from-gray-700 to-gray-800' : 'from-white to-gray-50'} shadow-md mb-6`}>
                 {feature.icon}
               </div>
-              <h3 className="font-poppins text-xl font-semibold text-[#00483a] dark:text-[#38bdf8] mb-4">
+              <h3 className={`font-poppins text-xl font-semibold ${darkMode ? 'text-[#38bdf8]' : 'text-[#00483a]'} mb-4`}>
                 {feature.title}
               </h3>
-              <p className="font-roboto text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
                 {feature.description}
               </p>
             </div>
@@ -134,10 +136,10 @@ export default function Features() {
         </div>
 
         <div className="text-center">
-          <button className="inline-flex items-center justify-center gap-2 bg-[#00483a] dark:bg-[#38bdf8] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:bg-[#00483a]/80 dark:hover:bg-[#38bdf8]/80 hover:scale-105">
+          <button className={`inline-flex items-center justify-center gap-2 ${darkMode ? 'bg-[#38bdf8] hover:bg-[#38bdf8]/80' : 'bg-[#00483a] hover:bg-[#00483a]/80'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:scale-105`}>
             Start Free Scan
           </button>
-          <p className="font-roboto text-sm text-gray-500 dark:text-gray-400 mt-4">
+          <p className={`font-roboto text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-4`}>
             No credit card required • Get results in under 2 minutes
           </p>
         </div>

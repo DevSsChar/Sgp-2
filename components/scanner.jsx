@@ -1,21 +1,34 @@
 "use client";
+import { useTheme } from './ThemeContext';
 
 import { useState } from "react";
 import { motion } from "framer-motion";
 
 function ImpactBadge({ impact }) {
+  const { darkMode } = useTheme();
+  
   const getImpactStyles = () => {
     switch (impact) {
       case "critical":
-        return "bg-red-100 text-red-800 border-red-200";
+        return darkMode
+          ? "bg-red-900/30 text-red-300 border-red-800" 
+          : "bg-red-100 text-red-800 border-red-200";
       case "serious":
-        return "bg-orange-100 text-orange-800 border-orange-200";
+        return darkMode
+          ? "bg-orange-900/30 text-orange-300 border-orange-800" 
+          : "bg-orange-100 text-orange-800 border-orange-200";
       case "moderate":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return darkMode
+          ? "bg-amber-900/30 text-amber-300 border-amber-800" 
+          : "bg-amber-100 text-amber-800 border-amber-200";
       case "minor":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return darkMode
+          ? "bg-yellow-900/30 text-yellow-300 border-yellow-800" 
+          : "bg-yellow-100 text-yellow-800 border-yellow-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return darkMode
+          ? "bg-gray-700 text-gray-300 border-gray-600" 
+          : "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -27,17 +40,19 @@ function ImpactBadge({ impact }) {
 }
 
 function StatCard({ label, value, icon }) {
+  const { darkMode } = useTheme();
+  
   return (
-    <div className="rounded-xl bg-white shadow-md border border-gray-100 p-4 transition-all duration-300 hover:shadow-lg">
+    <div className={`rounded-xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} shadow-md border p-4 transition-all duration-300 hover:shadow-lg`}>
       <div className="flex items-center gap-3">
         {icon && (
-          <div className="rounded-full bg-[#00d4ff]/10 p-2 text-[#00d4ff]">
+          <div className={`rounded-full ${darkMode ? 'bg-[#38bdf8]/20 text-[#38bdf8]' : 'bg-[#00d4ff]/10 text-[#00483a]'} p-2`}>
             {icon}
           </div>
         )}
         <div>
-          <div className="text-sm text-gray-600">{label}</div>
-          <div className="font-semibold text-2xl text-gray-900">{value}</div>
+          <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{label}</div>
+          <div className={`font-semibold text-2xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>{value}</div>
         </div>
       </div>
     </div>
@@ -45,6 +60,7 @@ function StatCard({ label, value, icon }) {
 }
 
 export default function Scanner() {
+  const { darkMode } = useTheme();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -125,7 +141,7 @@ export default function Scanner() {
   );
 
   return (
-    <section className="mt-20 md:mt-24 min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-gray-50 text-gray-900">
+    <section className={`mt-20 md:mt-24 min-h-[calc(100vh-4rem)] ${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-b from-white to-gray-50 text-gray-900'}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -133,8 +149,8 @@ export default function Scanner() {
           transition={{ duration: 0.5 }}
           className="mb-10"
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-[#00483a] mb-3">Accessibility Scanner</h1>
-          <p className="text-lg text-gray-700">
+          <h1 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-white' : 'text-[#00483a]'} mb-3`}>Accessibility Scanner</h1>
+          <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             Scan your website for accessibility issues and get detailed reports on WCAG compliance.
           </p>
         </motion.div>
@@ -143,17 +159,17 @@ export default function Scanner() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="rounded-2xl bg-white shadow-lg border border-gray-100 p-6 mb-10"
+          className={`rounded-2xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} shadow-lg border p-6 mb-10`}
         >
           <form onSubmit={handleScan}>
             <div className="space-y-4">
               <div>
-                <label htmlFor="url-input" className="block text-sm font-medium text-gray-800 mb-1">
+                <label htmlFor="url-input" className={`block text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'} mb-1`}>
                   Website URL to Scan
                 </label>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <div className={`absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -167,7 +183,7 @@ export default function Scanner() {
                       placeholder="https://example.com"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="w-full pl-10 rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-[#00d4ff] focus:border-transparent"
+                      className={`w-full pl-10 rounded-lg border ${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'} px-4 py-3 focus:ring-2 focus:ring-[#00d4ff] focus:border-transparent`}
                       required
                     />
                   </div>

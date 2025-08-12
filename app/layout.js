@@ -4,6 +4,7 @@ import "./dark-mode.css";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import SessionWrapper from "@/components/SessionWrapper";
+import { ThemeProvider } from "@/components/ThemeContext";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -40,9 +41,11 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <SessionWrapper>
-          <Navbar />
-          {children}
-          <Footer />
+          <ThemeProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </ThemeProvider>
         </SessionWrapper>
       </body>
     </html>

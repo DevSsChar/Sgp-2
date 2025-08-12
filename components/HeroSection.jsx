@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useTheme } from './ThemeContext';
 
 export default function HeroSection() {
   const [websiteUrl, setWebsiteUrl] = useState('');
+  const { darkMode } = useTheme();
 
   const handleInputChange = (e) => {
     setWebsiteUrl(e.target.value);
@@ -21,10 +23,10 @@ export default function HeroSection() {
       {/* Background with overlay */}
       <div className="absolute inset-0 z-0">
         {/* Primary background - gradient */}
-        <div className="absolute inset-0 bg-gradient-hero"></div>
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gray-950' : 'bg-gray-900'}`}></div>
 
         {/* SVG Background */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <div className={`absolute inset-0 flex items-center justify-center ${darkMode ? 'opacity-10' : 'opacity-20'}`}>
           <Image
             src="/images/OIPD.jpeg"
             alt="accessibility background"
@@ -47,7 +49,7 @@ export default function HeroSection() {
           <h1 className="font-poppins text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Make Your Website<br />
             Accessible with AI<br />
-            <span className="text-lime-400 inline-block animate-bounce">
+            <span className={`${darkMode ? 'text-lime-300' : 'text-lime-400'} inline-block animate-bounce`}>
               WCAG 2.1 AA
             </span>
           </h1>
@@ -59,7 +61,7 @@ export default function HeroSection() {
 
           {/* Search form */}
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 justify-center items-stretch mb-16 max-w-3xl mx-auto">
-            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-lg p-4 flex-grow">
+            <div className={`flex items-center ${darkMode ? 'bg-white/5' : 'bg-white/10'} backdrop-blur-sm rounded-lg p-4 flex-grow`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -86,7 +88,7 @@ export default function HeroSection() {
             </div>
             <button
               type="submit"
-              className="inline-flex items-center justify-center whitespace-nowrap text-white font-semibold bg-cyan-400 hover:bg-cyan-600 rounded-lg px-8 py-4 text-lg transition-all duration-300 shadow-lg"
+              className={`inline-flex items-center justify-center whitespace-nowrap text-white font-semibold ${darkMode ? 'bg-[#38bdf8] hover:bg-[#0ea5e9]' : 'bg-cyan-400 hover:bg-cyan-600'} rounded-lg px-8 py-4 text-lg transition-all duration-300 shadow-lg`}
             >
               Scan My Website
             </button>
@@ -113,7 +115,7 @@ export default function HeroSection() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-6 w-6 text-white/60"
+            className="h-6 w-6 text-white/60 dark:text-white/60"
           >
             <path d="M12 5v14"></path>
             <path d="m19 12-7 7-7-7"></path>
