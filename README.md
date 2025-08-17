@@ -1,4 +1,23 @@
-# AccessibilityGuard – Landing • Auth • Scanner • Reports • Dashboard
+# AccessibilityGu## What's New (Aug 2025)
+
+- Light mode polish: consistent backgrounds, borders, text contrast, and hover states across all component### Dashboard (components/dashboard.jsx)
+
+- Cards for Total Scans, Last Login, Last Report (consistent with StatCard)
+- Quick Actions: Run Scan, View History
+- Recent Reports list with "issues count" badges
+- Before & After Comparisons section showing accessibility improvements
+- Legal Risk Mitigation section with:
+  - ADA violations fixed, compliance statistics, and estimated legal savings
+  - Recent web accessibility legal cases with settlement amounts
+  - Visual indicators of impact and risk reduction
+- Theme-aligned backgrounds and shadows throughout all sectionsrk mode refinements for the report view (cards, headers, badges, tags, nodes drawer)
+- Violations tab: card layout, tags, help links, page-path chips, nodes count, and filters reworked for both themes
+- Pages tab: searchable page list with active state; issue counts; node details with code samples
+- Dashboard: "Last Login" and "Last Report" wired and theme-friendly; cleaned quick actions and lists
+- Dashboard enhancements: before/after comparisons and legal risk mitigation sections with ADA compliance data
+- Theme system: single source of truth via ThemeContext + ThemeToggle; no raw `dark:` classes coupled to Tailwind element scope
+- Consistent stat cards across Scanner, Report, Dashboard
+- Resilient formatting helpers (date/time) and robust URL/path handling in listsing • Auth • Scanner • Reports • Dashboard
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-20232a?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
@@ -35,7 +54,7 @@ Live wireframe reference: https://preview--access-ai-guardian-ui.lovable.app/
 - Feature grid (Automated Scanner, AI Remediation, One‑Click Fix, Multilingual Reports)
 - “How It Works” steps with connecting gradient
 - OAuth login (GitHub, Google) via NextAuth
-- User Dashboard with stats (Total Scans, Last Login, Last Report) and recent reports list
+- User Dashboard with stats (Total Scans, Last Login, Last Report), recent reports list, before/after comparisons, and legal risk mitigation insights
 - Full Report view with tabs:
   - Summary: report meta, violation overview, top rules
   - Pages: searchable, issue counts, node details, code excerpts
@@ -262,3 +281,6 @@ npm run lint
 - Bulk export and shareable report URLs
 - Advanced filters (WCAG levels, tags)
 - Lighthouse/Pa11y integration experiments
+- Enhanced legal compliance tracking with jurisdiction-specific guidelines
+- Timeline view of accessibility improvements with historical comparisons
+- Risk calculator based on industry, traffic, and violation severity
