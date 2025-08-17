@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useTheme } from './ThemeContext';
+import Link from 'next/link';
 
 export default function Features() {
   const { darkMode } = useTheme();
@@ -136,9 +137,11 @@ export default function Features() {
         </div>
 
         <div className="text-center">
-          <button className={`inline-flex items-center justify-center gap-2 ${darkMode ? 'bg-[#38bdf8] hover:bg-[#38bdf8]/80' : 'bg-[#00483a] hover:bg-[#00483a]/80'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:scale-105`}>
-            Start Free Scan
-          </button>
+          <Link href="/scanner">
+            <button className={`inline-flex cursor-pointer items-center justify-center gap-2 ${darkMode ? 'bg-[#38bdf8] hover:bg-[#38bdf8]/80' : 'bg-[#00483a] hover:bg-[#00483a]/80'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:scale-105`}>
+              Start Free Scan
+            </button>
+          </Link>
           <p className={`font-roboto text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-4`}>
             No credit card required • Get results in under 2 minutes
           </p>

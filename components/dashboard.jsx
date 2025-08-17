@@ -173,7 +173,7 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
         const userData = userProp || {
           fullName: session?.user?.name || "User",
           email: session?.user?.email || "",
-          scansCount: 0,
+          scansCount: session?.user?.scansCount,
           // Set last login to current date if not available
           lastLoginAt: session?.user?.lastLoginAt || new Date().toISOString(),
         };
@@ -497,7 +497,206 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
           )}
         </motion.div>
 
+        {/* Before & After Comparisons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className={`rounded-xl shadow-md border p-6 mb-8 ${darkMode 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-100'}`}
+        >
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b ${darkMode 
+            ? 'border-gray-700' 
+            : 'border-gray-100'}`}>
+            <div>
+              <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Before & After Comparisons</h2>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>See the improvements made after implementing our recommendations</p>
+            </div>
+          </div>
 
+          <div className="grid md:grid-cols-2 gap-6">
+            {reports?.length > 0 ? (
+              <>
+                <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <h3 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Before Fixes</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Missing image alt text on 12 images</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Low color contrast ratio (1.8:1)</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Non-descriptive link text ("click here")</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>No keyboard navigation support</span>
+                    </div>
+                  </div>
+                </div>
+                <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <h3 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>After Fixes</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Descriptive alt text added to all images</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Color contrast improved to 7:1 ratio</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Descriptive link text implemented</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className={`min-w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                      <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Full keyboard navigation added</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="md:col-span-2 flex flex-col items-center py-8 text-center">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                    className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                </div>
+                <p className={`text-sm max-w-md ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Run your first scan to see before and after comparisons of accessibility fixes.
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Lawsuits Saved */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className={`rounded-xl shadow-md border p-6 ${darkMode 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-100'}`}
+        >
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b ${darkMode 
+            ? 'border-gray-700' 
+            : 'border-gray-100'}`}>
+            <div>
+              <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Legal Risk Mitigation</h2>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Potential legal risks avoided by fixing accessibility issues</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'} flex flex-col items-center text-center`}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${darkMode ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-100 text-amber-600'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m15 9-6 6"></path>
+                  <path d="m9 9 6 6"></path>
+                </svg>
+              </div>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>14</h3>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>ADA violations fixed</p>
+            </div>
+            <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'} flex flex-col items-center text-center`}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${darkMode ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>3</h3>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>States with compliance</p>
+            </div>
+            <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'} flex flex-col items-center text-center`}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${darkMode ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20"></path>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>$75K</h3>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Est. savings per lawsuit</p>
+            </div>
+          </div>
+
+          <div className={`p-5 rounded-lg border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+            <h3 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Recent Web Accessibility Legal Cases</h3>
+            <div className="space-y-4">
+              <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>Gill v. Winn-Dixie Stores, Inc.</h4>
+                  <span className={`text-xs px-2 py-1 rounded ${darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>$250K settlement</span>
+                </div>
+                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Plaintiff couldn't use screen reader due to improperly coded website.</p>
+              </div>
+              
+              <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>Robles v. Domino's Pizza</h4>
+                  <span className={`text-xs px-2 py-1 rounded ${darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>Ongoing</span>
+                </div>
+                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Supreme Court denied appeal, ADA applies to websites & apps.</p>
+              </div>
+              
+              <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>National Federation of the Blind v. Target</h4>
+                  <span className={`text-xs px-2 py-1 rounded ${darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>$6M settlement</span>
+                </div>
+                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Landmark case establishing that the ADA applies to websites.</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useTheme } from './ThemeContext';
+import Link from 'next/link';
 
 export default function HowItWorks() {
   const { darkMode } = useTheme();
@@ -126,9 +127,11 @@ export default function HowItWorks() {
         </div>
 
         <div className="text-center mt-16">
-          <button className={`inline-flex items-center justify-center gap-2 ${darkMode ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-cyan-400 hover:bg-cyan-500'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4`}>
-            See It In Action
-          </button>
+          <Link href="/scanner">
+            <button className={`inline-flex items-center justify-center gap-2 ${darkMode ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-cyan-400 hover:bg-cyan-500'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 cursor-pointer`}>
+              See It In Action
+            </button>
+          </Link>
         </div>
       </div>
     </section>

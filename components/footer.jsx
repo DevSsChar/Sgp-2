@@ -23,7 +23,7 @@ export default function Footer() {
             <h4 className={`font-poppins font-semibold mb-4 ${darkMode ? 'text-white' : 'text-[#00483a]'}`}>Product</h4>
             <ul className={`space-y-2 font-roboto ${darkMode ? 'text-white/80' : 'text-gray-600'}`}>
               <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#features">Features</a></li>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#pricing">Pricing</a></li>
+              {/* <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#pricing">Pricing</a></li> */}
               <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">API Docs</a></li>
               <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">Integrations</a></li>
             </ul>
