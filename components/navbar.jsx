@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import ThemeToggle from "./ThemeToggle";
+import { useEffect, useState } from "react";
 import { useTheme } from "./ThemeContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,6 +34,7 @@ export default function Navbar() {
         { href: "/dashboard", label: "Dashboard" },
         { href: "/scanner", label: "Scanner" },
         { href: "/history", label: "History" },
+        { href: "/legal-guide", label: "Legal Guide" },
         { href: "/", label: "Home" },
       ]
     : [
@@ -42,6 +43,7 @@ export default function Navbar() {
         { href: "#features", label: "Features", onClick: (e) => { if (!isHome) { e.preventDefault(); showToast("This applies only on home page."); } } },
         { href: "#how-it-works", label: "How It Works", onClick: (e) => { if (!isHome) { e.preventDefault(); showToast("This applies only on home page."); } } },
         { href: "#about", label: "About", onClick: (e) => { if (!isHome) { e.preventDefault(); showToast("This applies only on home page."); } } },
+        { href: "/legal-guide", label: "Legal Guide" },
       ];
 
   return (
@@ -268,6 +270,15 @@ export default function Navbar() {
                       History
                     </Link>
                     <Link
+                      href="/legal-guide"
+                      className={`font-roboto ${
+                        darkMode ? "text-gray-300" : "text-gray-600"
+                      } hover:text-[#00d4ff] transition-colors font-medium`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Legal Guide
+                    </Link>
+                    <Link
                       href="/"
                       className={`font-roboto ${
                         darkMode ? "text-gray-300" : "text-gray-600"
@@ -348,6 +359,15 @@ export default function Navbar() {
                       }}
                     >
                       About
+                    </Link>
+                    <Link
+                      href="/legal-guide"
+                      className={`font-roboto ${
+                        darkMode ? "text-gray-300" : "text-gray-600"
+                      } hover:text-[#00d4ff] transition-colors font-medium`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Legal Guide
                     </Link>
                     <Link
                       href="/login"
