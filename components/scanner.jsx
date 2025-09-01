@@ -1,8 +1,9 @@
 "use client";
+import AIFixSidebar from './AIFixSidebar';
 import { useTheme } from './ThemeContext';
 
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function ImpactBadge({ impact }) {
   const { darkMode } = useTheme();
@@ -66,11 +67,55 @@ export default function Scanner() {
   const [error, setError] = useState("");
   const [report, setReport] = useState(null);
   const [activeTab, setActiveTab] = useState("summary");
+  const [showAIFix, setShowAIFix] = useState(false);
+  const [isRestoredReport, setIsRestoredReport] = useState(false);
+
+  // Load saved report from localStorage on component mount
+  useEffect(() => {
+    const savedReport = localStorage.getItem('accessibilityReport');
+    const savedUrl = localStorage.getItem('scannedUrl');
+    
+    if (savedReport && savedUrl) {
+      try {
+        const parsedReport = JSON.parse(savedReport);
+        setReport(parsedReport);
+        setUrl(savedUrl);
+        setIsRestoredReport(true);
+      } catch (error) {
+        console.error('Error loading saved report:', error);
+        // Clear corrupted data
+        localStorage.removeItem('accessibilityReport');
+        localStorage.removeItem('scannedUrl');
+      }
+    }
+  }, []);
+
+  // Save report to localStorage whenever it changes
+  useEffect(() => {
+    if (report && url && !isRestoredReport) {
+      localStorage.setItem('accessibilityReport', JSON.stringify(report));
+      localStorage.setItem('scannedUrl', url);
+    }
+  }, [report, url, isRestoredReport]);
+
+  // Clear saved data
+  const clearSavedData = () => {
+    localStorage.removeItem('accessibilityReport');
+    localStorage.removeItem('scannedUrl');
+    setReport(null);
+    setUrl("");
+    setIsRestoredReport(false);
+    setError("");
+    setActiveTab("summary");
+    setShowAIFix(false);
+  };
 
   async function handleScan(e) {
     e.preventDefault();
     setError("");
     setReport(null);
+    setIsRestoredReport(false); // Mark this as a new scan
+    
     if (!/^https?:\/\//i.test(url)) {
       setError("Enter a valid URL starting with http(s)://");
       return;
@@ -103,6 +148,12 @@ export default function Scanner() {
     a.click();
     a.remove();
     URL.revokeObjectURL(href);
+  }
+
+  function formatDateTime(dateString) {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleString();
   }
 
   // Icons for stats
@@ -230,6 +281,43 @@ export default function Scanner() {
             </div>
           </form>
 
+          {/* Restored Report Notice */}
+          {isRestoredReport && report && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className={`mt-4 p-4 rounded-lg border ${
+                darkMode 
+                  ? 'bg-blue-900/20 border-blue-700 text-blue-300' 
+                  : 'bg-blue-50 border-blue-200 text-blue-800'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                  <span className="text-sm font-medium">
+                    Previous scan report restored from your last session
+                  </span>
+                </div>
+                <button
+                  onClick={clearSavedData}
+                  className={`text-xs px-3 py-1 rounded-md border transition-colors ${
+                    darkMode
+                      ? 'border-blue-600 text-blue-300 hover:bg-blue-800/30'
+                      : 'border-blue-300 text-blue-700 hover:bg-blue-100'
+                  }`}
+                >
+                  Clear & New Scan
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-gray-700">Guidelines</h3>
@@ -306,15 +394,33 @@ export default function Scanner() {
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
-            <div className="rounded-xl bg-white shadow-lg border border-gray-100 p-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-6">
+            <div className={`rounded-xl shadow-lg border p-6 ${
+              darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+            }`}>
+              <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b pb-6 mb-6 ${
+                darkMode ? 'border-gray-700' : 'border-gray-100'
+              }`}>
                 <div>
-                  <div className="text-sm text-gray-600">Report ID</div>
-                  <div className="font-mono text-sm">{report.reportId}</div>
+                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Report ID</div>
+                  <div className={`font-mono text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+                    {report.reportId}
+                  </div>
+                  {report.createdAt && (
+                    <div className={`text-xs mt-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                      Generated: {formatDateTime(report.createdAt)}
+                    </div>
+                  )}
+                  {isRestoredReport && (
+                    <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      📄 Restored from previous session
+                    </div>
+                  )}
                 </div>
                 <div className="sm:text-right">
-                  <div className="text-sm text-gray-600">Base URL</div>
-                  <div className="font-medium text-gray-900 break-all">{report.baseUrl}</div>
+                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Base URL</div>
+                  <div className={`font-medium break-all ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {report.baseUrl}
+                  </div>
                 </div>
               </div>
 
@@ -343,12 +449,24 @@ export default function Scanner() {
 
               {Array.isArray(report.summary?.topRules) && report.summary.topRules.length > 0 && (
                 <div className="mt-6">
-                  <div className="text-sm font-medium text-gray-700 mb-3">Top Rules (by affected nodes)</div>
+                  <div className={`text-sm font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Top Rules (by affected nodes)
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {report.summary.topRules.slice(0, 8).map((r) => (
-                      <span key={r.rule} className="inline-flex items-center gap-2 rounded-full bg-gray-100 text-gray-800 text-xs px-3 py-1.5 border border-gray-200">
+                      <span key={r.rule} className={`inline-flex items-center gap-2 rounded-full text-xs px-3 py-1.5 border ${
+                        darkMode 
+                          ? 'bg-gray-700 text-gray-200 border-gray-600' 
+                          : 'bg-gray-100 text-gray-800 border-gray-200'
+                      }`}>
                         <span className="font-mono">{r.rule}</span>
-                        <span className="bg-white text-gray-600 rounded-full px-1.5 py-0.5 text-xs border border-gray-200">{r.nodes}</span>
+                        <span className={`rounded-full px-1.5 py-0.5 text-xs border ${
+                          darkMode 
+                            ? 'bg-gray-600 text-gray-300 border-gray-500' 
+                            : 'bg-white text-gray-600 border-gray-200'
+                        }`}>
+                          {r.nodes}
+                        </span>
                       </span>
                     ))}
                   </div>
@@ -359,7 +477,11 @@ export default function Scanner() {
                 <button
                   type="button"
                   onClick={() => downloadJson(report, `a11y-report-${new Date().toISOString().slice(0,10)}.json`)}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 px-4 py-2 text-sm font-medium transition-colors"
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                    darkMode
+                      ? 'border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600'
+                      : 'border-gray-300 bg-white text-gray-800 hover:bg-gray-50'
+                  }`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -369,16 +491,59 @@ export default function Scanner() {
                   </svg>
                   Download JSON
                 </button>
+
+                <button
+                  type="button"
+                  onClick={clearSavedData}
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                    darkMode
+                      ? 'border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600'
+                      : 'border-gray-300 bg-white text-gray-800 hover:bg-gray-50'
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                  Clear & New Scan
+                </button>
+
+                {/* AI Fix Button */}
+                {report.pages?.some(p => p.violations?.length > 0) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAIFix(true)}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 px-4 py-2 text-sm font-medium transition-all duration-300 shadow-lg"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    AI Fix Suggestions
+                    <span className="bg-white/20 px-2 py-1 rounded text-xs ml-1">
+                      Qwen 2.5
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
 
             {Array.isArray(report.pages) && report.pages.length > 0 && (
               <div className="space-y-6">
-                <div className="rounded-xl bg-white shadow-lg border border-gray-100 p-6">
-                  <div className="border-b border-gray-100 pb-4 mb-4">
+                <div className={`rounded-xl shadow-lg border p-6 ${
+                  darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+                }`}>
+                  <div className={`border-b pb-4 mb-4 ${
+                    darkMode ? 'border-gray-700' : 'border-gray-100'
+                  }`}>
                     <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-gray-900">Scanned Pages</h2>
-                      <div className="text-sm text-gray-600">Total: {report.pages.length}</div>
+                      <h2 className={`text-lg font-semibold ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>Scanned Pages</h2>
+                      <div className={`text-sm ${
+                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                      }`}>Total: {report.pages.length}</div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -389,11 +554,15 @@ export default function Scanner() {
                         <a 
                           key={p.url || id} 
                           href={`#${id}`} 
-                          className="inline-flex items-center rounded-full bg-gray-100 border border-gray-200 px-4 py-1.5 text-sm text-gray-800 hover:bg-gray-200 transition-colors"
+                          className={`inline-flex items-center rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                            darkMode 
+                              ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' 
+                              : 'bg-gray-100 border-gray-200 text-gray-800 hover:bg-gray-200'
+                          }`}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                               className="mr-1.5 text-gray-500">
+                               className={`mr-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                           </svg>
@@ -410,21 +579,29 @@ export default function Scanner() {
                   const violations = p.violations || [];
                   
                   return (
-                    <section key={p.url || id} id={id} className="rounded-xl bg-white shadow-lg border border-gray-100 p-6 scroll-mt-24">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-100 pb-4 mb-4">
-                        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <section key={p.url || id} id={id} className={`rounded-xl shadow-lg border p-6 scroll-mt-24 ${
+                      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+                    }`}>
+                      <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-4 mb-4 ${
+                        darkMode ? 'border-gray-700' : 'border-gray-100'
+                      }`}>
+                        <h2 className={`text-lg font-semibold flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                               className="text-gray-500">
+                               className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                           </svg>
                           {path}
                         </h2>
-                        <div className="text-sm text-gray-600 flex items-center gap-2">
+                        <div className={`text-sm flex items-center gap-2 ${
+                          darkMode ? 'text-gray-400' : 'text-gray-600'
+                        }`}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                               className="text-gray-400">
+                               className={darkMode ? 'text-gray-500' : 'text-gray-400'}>
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                           </svg>
@@ -435,27 +612,37 @@ export default function Scanner() {
                       {violations.length === 0 ? (
                         <div className="flex items-center justify-center p-8 text-center">
                           <div>
-                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-500 mb-3">
+                            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${
+                              darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-500'
+                            }`}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
                                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M20 6 9 17l-5-5"></path>
                               </svg>
                             </div>
-                            <p className="text-gray-700 font-medium">No accessibility issues found on this page.</p>
-                            <p className="text-gray-500 text-sm mt-1">This page appears to meet accessibility standards.</p>
+                            <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                              No accessibility issues found on this page.
+                            </p>
+                            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              This page appears to meet accessibility standards.
+                            </p>
                           </div>
                         </div>
                       ) : (
-                        <ul className="divide-y divide-gray-100">
+                        <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-100'}`}>
                           {violations.map((v, vi) => (
                             <li key={`${p.url || id}-${v.id}-${vi}`} className="py-4 first:pt-0 last:pb-0">
                               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                                 <div className="flex-1">
                                   <div className="flex items-center flex-wrap gap-2 mb-2">
                                     <ImpactBadge impact={v.impact} />
-                                    <span className="font-medium text-gray-900">{v.id}</span>
+                                    <span className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                      {v.id}
+                                    </span>
                                   </div>
-                                  <p className="text-sm text-gray-800 mb-2">{v.description}</p>
+                                  <p className={`text-sm mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-800'}`}>
+                                    {v.description}
+                                  </p>
                                   <a href={v.helpUrl} target="_blank" rel="noreferrer" 
                                      className="inline-flex items-center gap-1.5 text-sm text-[#00d4ff] hover:underline">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
@@ -468,17 +655,25 @@ export default function Scanner() {
                                   {Array.isArray(v.tags) && v.tags.length > 0 && (
                                     <div className="mt-3 flex flex-wrap gap-1.5">
                                       {v.tags.slice(0, 6).map((t) => (
-                                        <span key={`${v.id}-${t}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700 border border-gray-200">
+                                        <span key={`${v.id}-${t}`} className={`inline-flex items-center px-2 py-0.5 rounded text-xs border ${
+                                          darkMode 
+                                            ? 'bg-gray-700 text-gray-300 border-gray-600' 
+                                            : 'bg-gray-100 text-gray-700 border-gray-200'
+                                        }`}>
                                           {t}
                                         </span>
                                       ))}
                                     </div>
                                   )}
                                 </div>
-                                <div className="shrink-0 flex items-center justify-center bg-gray-100 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-200">
+                                <div className={`shrink-0 flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium border ${
+                                  darkMode 
+                                    ? 'bg-gray-700 text-gray-300 border-gray-600' 
+                                    : 'bg-gray-100 text-gray-700 border-gray-200'
+                                }`}>
                                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
                                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                       className="mr-1.5 text-gray-500">
+                                       className={`mr-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                     <rect x="2" y="2" width="8" height="8" rx="2"></rect>
                                     <rect x="14" y="2" width="8" height="8" rx="2"></rect>
                                     <rect x="2" y="14" width="8" height="8" rx="2"></rect>
@@ -490,31 +685,55 @@ export default function Scanner() {
                               
                               {Array.isArray(v.nodes) && v.nodes.length > 0 && (
                                 <details className="mt-4 group">
-                                  <summary className="cursor-pointer text-sm font-medium flex items-center gap-2 text-gray-700 hover:text-gray-900">
+                                  <summary className={`cursor-pointer text-sm font-medium flex items-center gap-2 ${
+                                    darkMode 
+                                      ? 'text-gray-300 hover:text-white' 
+                                      : 'text-gray-700 hover:text-gray-900'
+                                  }`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
                                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                         className="text-gray-500 group-open:rotate-90 transition-transform">
+                                         className={`group-open:rotate-90 transition-transform ${
+                                           darkMode ? 'text-gray-400' : 'text-gray-500'
+                                         }`}>
                                       <polyline points="9 18 15 12 9 6"></polyline>
                                     </svg>
                                     View affected nodes ({v.nodes.length})
                                   </summary>
-                                  <div className="mt-3 space-y-3 pl-6 border-l-2 border-gray-100">
+                                  <div className={`mt-3 space-y-3 pl-6 border-l-2 ${
+                                    darkMode ? 'border-gray-700' : 'border-gray-100'
+                                  }`}>
                                     {v.nodes.slice(0, 5).map((n, ni) => (
                                       <div key={`${p.url || id}-${v.id}-${(n.target || []).join('|')}-${ni}`} 
-                                           className="rounded-lg border border-gray-200 overflow-hidden">
-                                        <div className="bg-gray-50 p-3 border-b border-gray-200">
-                                          <div className="font-mono text-xs px-2 py-1 rounded bg-white border border-gray-200 inline-block">
+                                           className={`rounded-lg border overflow-hidden ${
+                                             darkMode ? 'border-gray-600' : 'border-gray-200'
+                                           }`}>
+                                        <div className={`p-3 border-b ${
+                                          darkMode 
+                                            ? 'bg-gray-700 border-gray-600' 
+                                            : 'bg-gray-50 border-gray-200'
+                                        }`}>
+                                          <div className={`font-mono text-xs px-2 py-1 rounded border inline-block ${
+                                            darkMode 
+                                              ? 'bg-gray-800 border-gray-600 text-gray-300' 
+                                              : 'bg-white border-gray-200 text-gray-800'
+                                          }`}>
                                             {(n.target || []).join(", ")}
                                           </div>
                                         </div>
                                         {n.failureSummary && (
-                                          <div className="p-3 text-sm text-gray-800">
+                                          <div className={`p-3 text-sm ${
+                                            darkMode ? 'text-gray-300' : 'text-gray-800'
+                                          }`}>
                                             {n.failureSummary}
                                           </div>
                                         )}
                                         {n.html && (
                                           <div className="p-3 pt-0">
-                                            <pre className="bg-gray-50 border rounded p-3 text-xs overflow-auto max-h-48 font-mono">
+                                            <pre className={`border rounded p-3 text-xs overflow-auto max-h-48 font-mono ${
+                                              darkMode 
+                                                ? 'bg-gray-800 border-gray-600 text-gray-300' 
+                                                : 'bg-gray-50 border-gray-200 text-gray-800'
+                                            }`}>
                                               {n.html}
                                             </pre>
                                           </div>
@@ -522,7 +741,9 @@ export default function Scanner() {
                                       </div>
                                     ))}
                                     {v.nodes.length > 5 && (
-                                      <div className="text-sm text-gray-600 py-2">
+                                      <div className={`text-sm py-2 ${
+                                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                                      }`}>
                                         +{v.nodes.length - 5} more nodes not shown
                                       </div>
                                     )}
@@ -540,6 +761,14 @@ export default function Scanner() {
             )}
           </motion.div>
         )}
+
+        {/* AI Fix Sidebar */}
+        <AIFixSidebar
+          violations={report?.pages?.flatMap(p => p.violations || []) || []}
+          scanUrl={report?.baseUrl || url}
+          isOpen={showAIFix}
+          onClose={() => setShowAIFix(false)}
+        />
       </div>
     </section>
   );
