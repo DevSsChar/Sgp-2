@@ -64,15 +64,9 @@ export default function AIFixSidebar({ violations, scanUrl, isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50" 
-        onClick={onClose}
-      />
-      
-      {/* Sidebar */}
-      <div className={`relative ml-auto w-full max-w-4xl h-full overflow-y-auto ${
+    <div className="fixed inset-0 z-50 flex pointer-events-none">
+      {/* Sidebar only - no backdrop at all */}
+      <div className={`relative ml-auto w-full max-w-2xl h-full overflow-y-auto pointer-events-auto ${
         darkMode ? 'bg-gray-900 text-white border-l border-gray-700' : 'bg-white text-gray-900 border-l border-gray-200'
       } shadow-2xl`}>
         
