@@ -1,4 +1,5 @@
 "use client";
+import { generateComprehensiveReportPDF } from '../utils/pdfGenerator';
 import AIFixSidebar from './AIFixSidebar';
 import { useTheme } from './ThemeContext';
 
@@ -57,6 +58,139 @@ function StatCard({ label, value, icon }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Comprehensive Report Button Component
+function ComprehensiveReportButton({ report, url, darkMode }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Helper function to extract all violations from pages
+  const getAllViolations = (pages) => {
+    const allViolations = [];
+    if (Array.isArray(pages)) {
+      pages.forEach(page => {
+        if (Array.isArray(page.violations)) {
+          allViolations.push(...page.violations);
+        }
+      });
+    }
+    return allViolations;
+  };
+
+  const handleGenerateComprehensiveReport = async () => {
+    setIsGenerating(true);
+    
+    try {
+      // Prepare scan data for the AI API
+      const scanData = {
+        baseUrl: report.baseUrl || url,
+        reportId: report.reportId,
+        summary: report.summary,
+        pages: report.pages,
+        violations: getAllViolations(report.pages)
+      };
+
+      console.log('Sending scan data:', scanData); // Debug log
+
+      // Validate we have violations
+      if (!scanData.violations || scanData.violations.length === 0) {
+        throw new Error('No violations found to generate report');
+      }
+
+      console.log(`Found ${scanData.violations.length} violations to analyze`);
+
+      // Call comprehensive AI report API
+      const response = await fetch('/api/ai-comprehensive-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scanData),
+      });
+
+      console.log('Response status:', response.status, response.ok);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`Failed to generate report: ${response.status} - ${errorText}`);
+      }
+
+      const aiReportData = await response.json();
+      console.log('Received AI report data:', aiReportData); // Debug log
+
+      // Extract the report from the response
+      const reportData = aiReportData.report || aiReportData;
+
+      if (!reportData) {
+        throw new Error('No report data received from API');
+      }
+
+      // Generate metadata for PDF
+      const metadata = {
+        websiteUrl: report.baseUrl || url,
+        generatedAt: new Date().toISOString(),
+        totalViolations: report.summary?.totalNodes || 0,
+        uniqueViolationTypes: report.summary?.totalRules || 0
+      };
+
+      console.log('Generating PDF with metadata:', metadata);
+
+      // Generate and download PDF
+      const filename = `comprehensive-accessibility-report-${new Date().toISOString().slice(0,10)}.pdf`;
+      
+      // Pass raw violation data and pages for detailed formatting
+      await generateComprehensiveReportPDF(
+        reportData, 
+        metadata, 
+        filename,
+        scanData.violations, // Raw violations with full details
+        scanData.pages       // Pages data for page-by-page breakdown
+      );
+
+      // Show success message
+      alert('Comprehensive report generated successfully!');
+
+    } catch (error) {
+      console.error('Error generating comprehensive report:', error);
+      alert(`Failed to generate comprehensive report: ${error.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleGenerateComprehensiveReport}
+      disabled={isGenerating}
+      className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium transition-all duration-300 shadow-lg"
+    >
+      {isGenerating ? (
+        <>
+          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Generating Report...</span>
+        </>
+      ) : (
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+            <polyline points="14,2 14,8 20,8"></polyline>
+            <path d="M12 18v-6"></path>
+            <path d="M9 15h6"></path>
+          </svg>
+          <span>Comprehensive AI Report</span>
+          <span className="bg-white/20 px-2 py-1 rounded text-xs ml-1">
+            PDF
+          </span>
+        </>
+      )}
+    </button>
   );
 }
 
@@ -713,6 +847,11 @@ export default function Scanner() {
                       Qwen 2.5
                     </span>
                   </button>
+                )}
+
+                {/* Comprehensive AI Report Button */}
+                {report.pages?.some(p => p.violations?.length > 0) && (
+                  <ComprehensiveReportButton report={report} url={url} darkMode={darkMode} />
                 )}
               </div>
             </div>
