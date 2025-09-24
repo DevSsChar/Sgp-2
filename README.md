@@ -1,4 +1,4 @@
-# AccessibilityGu## What's New (Aug 2025)
+# Accessibility Guard## What's New (Aug 2025)
 
 - Light mode polish: consistent backgrounds, borders, text contrast, and hover states across all component### Dashboard (components/dashboard.jsx)
 
