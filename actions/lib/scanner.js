@@ -4,7 +4,17 @@ const AxePuppeteer = require("@axe-core/puppeteer").default;
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 async function createBrowser({ headless = false } = {}) {
-  return puppeteer.launch({ headless, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
+  return puppeteer.launch({ 
+    headless, 
+    args: [
+      "--no-sandbox", 
+      "--disable-setuid-sandbox",
+      "--ignore-certificate-errors",
+      "--ignore-ssl-errors",
+      "--ignore-certificate-errors-spki-list",
+      "--disable-web-security"
+    ] 
+  });
 }
 
 async function withPage(browser, fn) {
@@ -12,6 +22,13 @@ async function withPage(browser, fn) {
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
   );
+  
+  // Bypass SSL certificate errors at page level
+  await page.setBypassCSP(true);
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'en-US,en;q=0.9'
+  });
+  
   try {
     return await fn(page);
   } finally {

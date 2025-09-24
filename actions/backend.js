@@ -82,6 +82,9 @@ function getArg(name, def) {
   pageDocs.push(pageDoc);
       } catch (e) {
         console.warn(`[scan] ${url} failed: ${e.message}`);
+        // Add a failed page entry instead of skipping entirely
+        const { buildFailedPageDoc } = require("./lib/reporter");
+        pageDocs.push(buildFailedPageDoc(url, e.message));
       }
       if (delay) await new Promise((r) => setTimeout(r, delay));
     }

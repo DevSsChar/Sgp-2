@@ -1,23 +1,4 @@
-# AccessibilityGu## What's New (Aug 2025)
-
-- Light mode polish: consistent backgrounds, borders, text contrast, and hover states across all component### Dashboard (components/dashboard.jsx)
-
-- Cards for Total Scans, Last Login, Last Report (consistent with StatCard)
-- Quick Actions: Run Scan, View History
-- Recent Reports list with "issues count" badges
-- Before & After Comparisons section showing accessibility improvements
-- Legal Risk Mitigation section with:
-  - ADA violations fixed, compliance statistics, and estimated legal savings
-  - Recent web accessibility legal cases with settlement amounts
-  - Visual indicators of impact and risk reduction
-- Theme-aligned backgrounds and shadows throughout all sectionsrk mode refinements for the report view (cards, headers, badges, tags, nodes drawer)
-- Violations tab: card layout, tags, help links, page-path chips, nodes count, and filters reworked for both themes
-- Pages tab: searchable page list with active state; issue counts; node details with code samples
-- Dashboard: "Last Login" and "Last Report" wired and theme-friendly; cleaned quick actions and lists
-- Dashboard enhancements: before/after comparisons and legal risk mitigation sections with ADA compliance data
-- Theme system: single source of truth via ThemeContext + ThemeToggle; no raw `dark:` classes coupled to Tailwind element scope
-- Consistent stat cards across Scanner, Report, Dashboard
-- Resilient formatting helpers (date/time) and robust URL/path handling in listsing • Auth • Scanner • Reports • Dashboard
+# AccessibilityGuard – Landing • Auth • Scanner • Reports • Dashboard
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-20232a?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
@@ -34,13 +15,15 @@ Live wireframe reference: https://preview--access-ai-guardian-ui.lovable.app/
 
 ---
 
-## What’s New (Aug 2025)
+## What's New (Sep 2025)
 
 - Light mode polish: consistent backgrounds, borders, text contrast, and hover states across all components
 - Dark mode refinements for the report view (cards, headers, badges, tags, nodes drawer)
 - Violations tab: card layout, tags, help links, page-path chips, nodes count, and filters reworked for both themes
 - Pages tab: searchable page list with active state; issue counts; node details with code samples
-- Dashboard: “Last Login” and “Last Report” wired and theme-friendly; cleaned quick actions and lists
+- Dashboard: "Last Login" and "Last Report" wired and theme-friendly; cleaned quick actions and lists
+- Dashboard enhancements: before/after comparisons and legal risk mitigation sections with ADA compliance data
+- **Error handling improvements**: Pages that cannot be accessed (404, timeout, SSL certificate issues, etc.) now display user-friendly error messages instead of being silently skipped
 - Theme system: single source of truth via ThemeContext + ThemeToggle; no raw `dark:` classes coupled to Tailwind element scope
 - Consistent stat cards across Scanner, Report, Dashboard
 - Resilient formatting helpers (date/time) and robust URL/path handling in lists
@@ -50,14 +33,14 @@ Live wireframe reference: https://preview--access-ai-guardian-ui.lovable.app/
 ## Highlights
 
 - Hero with accessibility-themed imagery and gradient overlay
-- URL input + “Scan My Website” CTA
+- URL input + "Scan My Website" CTA
 - Feature grid (Automated Scanner, AI Remediation, One‑Click Fix, Multilingual Reports)
-- “How It Works” steps with connecting gradient
+- "How It Works" steps with connecting gradient
 - OAuth login (GitHub, Google) via NextAuth
 - User Dashboard with stats (Total Scans, Last Login, Last Report), recent reports list, before/after comparisons, and legal risk mitigation insights
 - Full Report view with tabs:
   - Summary: report meta, violation overview, top rules
-  - Pages: searchable, issue counts, node details, code excerpts
+  - Pages: searchable, issue counts, node details, code excerpts, **error handling for inaccessible pages**
   - Violations: global search/filter, impact summaries, per-violation cards
 - Theme-aware light/dark UI everywhere
 
@@ -116,7 +99,7 @@ Live wireframe reference: https://preview--access-ai-guardian-ui.lovable.app/
 
 ## Theming (Light & Dark)
 
-The entire UI is theme-aware using a context, not Tailwind’s global `dark` selector, to avoid hydration drift.
+The entire UI is theme-aware using a context, not Tailwind's global `dark` selector, to avoid hydration drift.
 
 - Provider: `components/ThemeContext.js`
 - Toggle: `components/ThemeToggle.jsx`
@@ -141,7 +124,7 @@ Key screens that were updated:
 
 - Tabs
   - Summary: Report Information, Violation Overview (impact totals), Top Violation Rules table
-  - Pages: Searchable list (path chips), active state indication, issue counts, node drawer (summary, target, failure text, HTML sample)
+  - Pages: Searchable list (path chips), active state indication, issue counts, node drawer (summary, target, failure text, HTML sample), **error states for failed pages**
   - Violations: Global search + impact filter; cards show impact badge, ID, description, help link, tags, page path, nodes count
 
 - Light mode improvements
@@ -156,12 +139,22 @@ Key screens that were updated:
   - Accent: cyan `#38bdf8` rollovers and active tab markers
   - Node details: proper code block backgrounds and borders
 
+- **Error handling**
+  - Pages that fail to load show "Error" badge instead of violation count
+  - Page details display error message instead of violations
+  - Clear visual distinction between successful scans and failed pages
+
 ### Dashboard (components/dashboard.jsx)
 
 - Cards for Total Scans, Last Login, Last Report (consistent with StatCard)
 - Quick Actions: Run Scan, View History
-- Recent Reports list with “issues count” badges
-- Theme-aligned backgrounds and shadows
+- Recent Reports list with "issues count" badges
+- Before & After Comparisons section showing accessibility improvements
+- Legal Risk Mitigation section with:
+  - ADA violations fixed, compliance statistics, and estimated legal savings
+  - Recent web accessibility legal cases with settlement amounts
+  - Visual indicators of impact and risk reduction
+- Theme-aligned backgrounds and shadows throughout all sections
 
 ### History (components/history.jsx)
 
@@ -172,6 +165,7 @@ Key screens that were updated:
 
 - Impact StatCards consistent with report and dashboard
 - Clear progress/empty states
+- **Error handling for failed pages**: Shows "Page not found or unable to scan" message with error details
 
 ---
 
@@ -186,10 +180,34 @@ Key screens that were updated:
   - `app/api/reports/[id]/route.js` – returns a single report JSON for the Report page
 - Scan
   - `app/api/scan/route.js` – kick off a scan (implementation starter available)
+  - **Enhanced error handling**: Failed page scans are now tracked and included in reports with error metadata
 
 Models:
 - `models/user.js` – `fullName`, `email` (unique, lowercase), `imageUrl`, managed fields: `role`, `lastLoginAt`, `scansCount`, `latestScan`
-- `models/scanReport.js` (optional) – If you choose to persist reports beyond demo
+- `models/scanReport.js` – Enhanced with error tracking: `scanError` and `errorMessage` fields in page metadata
+
+---
+
+## Error Handling Features
+
+### Page Scan Failures
+
+When pages cannot be accessed during scanning (404 errors, timeouts, network issues, etc.), the system now:
+
+1. **Tracks failed pages** instead of silently skipping them
+2. **Records error details** in the page metadata
+3. **Displays clear error messages** in the UI:
+   - "Page not found or unable to scan" heading
+   - Specific error message when available
+   - Error badge in page lists
+   - Distinct red error styling
+
+### Error States in UI
+
+- **Scanner**: Failed pages show error icon and message instead of violations
+- **Report Pages tab**: Error badge replaces violation count, error details in page view
+- **Report Violations tab**: Failed pages are excluded from violation aggregation
+- **Dashboard**: Error pages don't contribute to violation statistics
 
 ---
 
@@ -252,6 +270,7 @@ npm run lint
 - Status
   - critical/serious/moderate/minor: red/orange/amber/yellow families
   - needs‑review: neutral gray
+  - **error states**: red backgrounds with appropriate contrast
 
 ---
 
@@ -261,6 +280,7 @@ npm run lint
 - High color contrast in both themes
 - Semantic structure on cards, lists, and tables
 - Keyboard-friendly navigation and summary/details sections
+- **Clear error messaging** for failed page scans with appropriate ARIA labels
 
 ---
 
@@ -272,6 +292,15 @@ npm run lint
   - Ensure NextAuth callback populates `lastLoginAt` and that `/api/user/me` is reachable.
 - MongoDB writes to `test`
   - Database name must appear before `?` in the URI: `...mongodb.net/access_guard?...`, not `...mongodb.net/?.../access_guard`.
+- **Page scan failures**
+  - Check network connectivity and URL accessibility
+  - Failed pages are now tracked and displayed rather than silently ignored
+  - Error details are logged in browser console for debugging
+- **SSL Certificate Issues**
+  - The scanner automatically bypasses SSL certificate errors for accessibility testing
+  - Sites with invalid, expired, or self-signed certificates can still be scanned
+  - SSL errors are shown with user-friendly messages (e.g., "SSL certificate issue - the website's security certificate could not be verified")
+  - Original technical error details are preserved for debugging
 
 ---
 
@@ -284,3 +313,5 @@ npm run lint
 - Enhanced legal compliance tracking with jurisdiction-specific guidelines
 - Timeline view of accessibility improvements with historical comparisons
 - Risk calculator based on industry, traffic, and violation severity
+- **Retry mechanism for failed page scans**
+- **Detailed error categorization** (network, timeout, 404, etc.)

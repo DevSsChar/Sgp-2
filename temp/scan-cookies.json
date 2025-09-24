@@ -1,0 +1,47 @@
+[
+  {
+    "name": "logged_in",
+    "value": "no",
+    "domain": ".github.com",
+    "path": "/",
+    "expires": 1790268682.568201,
+    "size": 11,
+    "httpOnly": true,
+    "secure": true,
+    "session": false,
+    "sameSite": "Lax",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure"
+  },
+  {
+    "name": "_gh_sess",
+    "value": "QKTnYOf%2BQia0tLqAdu58t1XDrwKWyHs%2BlNmdPIoazB%2FylI022iQJtuMEfWiJSIT6E1l6yHJvEScW%2Bhdy3Iq0Iasb%2Fvmgf90%2BCvotZnwNzKILcTr2G00yXNYZbEd2plt1NEz5PuA4jQSn3iyQH6D7VCwX%2F8MosrQXIe1VnRpnoMPRsPqXiFO%2B3H%2Bc5HKLgY1woE43eqG3rm%2F%2BjpTzElw1DBh6vId0Q2oF47qx%2FSYS%2FaUTafcfd2ADp1IIhAGcHTv84ex6BD16SiEd3xW%2FJuCc8Q%3D%3D--wgeeaKwD%2Bjmc1WzN--Cy3%2BoX4zykF7qa6yUSjoCw%3D%3D",
+    "domain": "github.com",
+    "path": "/",
+    "expires": -1,
+    "size": 372,
+    "httpOnly": true,
+    "secure": true,
+    "session": true,
+    "sameSite": "Lax",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure"
+  },
+  {
+    "name": "_octo",
+    "value": "GH1.1.2124661224.1758732682",
+    "domain": ".github.com",
+    "path": "/",
+    "expires": 1790268682.118504,
+    "size": 32,
+    "httpOnly": false,
+    "secure": true,
+    "session": false,
+    "sameSite": "Lax",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure"
+  }
+]

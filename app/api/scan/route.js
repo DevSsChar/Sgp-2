@@ -65,7 +65,8 @@ export async function POST(req) {
         pageDocs.push(reporter.buildPageDoc(url, axe, includeIncomplete));
         if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
       } catch (e) {
-        // continue
+        // Add a failed page entry instead of skipping entirely
+        pageDocs.push(reporter.buildFailedPageDoc(url, e.message));
       }
     }
     await page.close().catch(() => {});

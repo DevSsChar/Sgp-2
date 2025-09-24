@@ -69,6 +69,9 @@ export default function Scanner() {
   const [activeTab, setActiveTab] = useState("summary");
   const [showAIFix, setShowAIFix] = useState(false);
   const [isRestoredReport, setIsRestoredReport] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState("");
+  const [scanSteps, setScanSteps] = useState([]);
 
   // Load saved report from localStorage on component mount
   useEffect(() => {
@@ -108,6 +111,46 @@ export default function Scanner() {
     setError("");
     setActiveTab("summary");
     setShowAIFix(false);
+    setProgress(0);
+    setCurrentStep("");
+    setScanSteps([]);
+  };
+
+  // Simulate scanning progress with steps
+  const simulateProgress = () => {
+    const steps = [
+      { message: "Initializing browser...", duration: 800 },
+      { message: "Loading page...", duration: 1200 },
+      { message: "Analyzing accessibility...", duration: 2000 },
+      { message: "Checking WCAG compliance...", duration: 1500 },
+      { message: "Generating report...", duration: 1000 },
+      { message: "Finalizing results...", duration: 500 }
+    ];
+    
+    setScanSteps(steps);
+    setProgress(0);
+    setCurrentStep(steps[0].message);
+    
+    let currentProgress = 0;
+    let stepIndex = 0;
+    
+    const progressInterval = setInterval(() => {
+      if (stepIndex < steps.length) {
+        currentProgress += (100 / steps.length) / (steps[stepIndex].duration / 50);
+        setProgress(Math.min(currentProgress, (stepIndex + 1) * (100 / steps.length)));
+        
+        if (currentProgress >= (stepIndex + 1) * (100 / steps.length)) {
+          stepIndex++;
+          if (stepIndex < steps.length) {
+            setCurrentStep(steps[stepIndex].message);
+          }
+        }
+      } else {
+        clearInterval(progressInterval);
+      }
+    }, 50);
+    
+    return progressInterval;
   };
 
   async function handleScan(e) {
@@ -120,7 +163,10 @@ export default function Scanner() {
       setError("Enter a valid URL starting with http(s)://");
       return;
     }
+    
     setLoading(true);
+    const progressInterval = simulateProgress();
+    
     try {
       const res = await fetch("/api/scan", {
         method: "POST",
@@ -129,12 +175,24 @@ export default function Scanner() {
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setReport(data);
-      setActiveTab("summary"); // Reset to summary tab
+      
+      // Complete the progress
+      clearInterval(progressInterval);
+      setProgress(100);
+      setCurrentStep("Scan completed!");
+      
+      // Brief delay to show completion
+      setTimeout(() => {
+        setReport(data);
+        setActiveTab("summary"); // Reset to summary tab
+        setLoading(false);
+      }, 800);
     } catch (e) {
+      clearInterval(progressInterval);
       setError(e?.message || "Scan failed");
-    } finally {
       setLoading(false);
+      setProgress(0);
+      setCurrentStep("");
     }
   }
 
@@ -241,15 +299,19 @@ export default function Scanner() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="sm:w-auto w-full rounded-lg bg-[#00d4ff] text-white font-semibold px-6 py-3 hover:bg-[#00d4ff]/90 disabled:opacity-60 transition-all duration-300 shadow-sm hover:shadow flex items-center justify-center gap-2"
+                    className={`sm:w-auto w-full rounded-lg bg-[#00d4ff] text-white font-semibold px-6 py-3 hover:bg-[#00d4ff]/90 disabled:opacity-60 transition-all duration-300 shadow-sm hover:shadow flex items-center justify-center gap-2 ${
+                      loading ? 'animate-pulse' : ''
+                    }`}
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Scanning...</span>
+                        <div className="flex items-center gap-2">
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Scanning...</span>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -280,6 +342,132 @@ export default function Scanner() {
               </div>
             </div>
           </form>
+
+          {/* Progress Bar */}
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mt-6 space-y-4"
+            >
+              {/* Progress Bar */}
+              <div className="relative">
+                <div className={`w-full h-3 rounded-full overflow-hidden ${
+                  darkMode ? 'bg-gray-700' : 'bg-gray-100'
+                }`}>
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[#00d4ff] to-[#0099cc] rounded-full"
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  />
+                </div>
+                <div className={`mt-2 text-sm font-medium text-center ${
+                  darkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  {Math.round(progress)}% Complete
+                </div>
+              </div>
+
+              {/* Current Step */}
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`flex items-center gap-3 p-4 rounded-lg ${
+                  darkMode 
+                    ? 'bg-gray-700/50 border border-gray-600' 
+                    : 'bg-blue-50 border border-blue-100'
+                }`}
+              >
+                <div className="flex items-center justify-center">
+                  <div className={`w-3 h-3 rounded-full animate-pulse ${
+                    darkMode ? 'bg-[#38bdf8]' : 'bg-[#00d4ff]'
+                  }`} />
+                </div>
+                <span className={`text-sm font-medium ${
+                  darkMode ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  {currentStep}
+                </span>
+              </motion.div>
+
+              {/* Scanning Animation */}
+              <div className="flex justify-center">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full animate-bounce ${
+                    darkMode ? 'bg-[#38bdf8]' : 'bg-[#00d4ff]'
+                  }`} style={{ animationDelay: '0ms' }} />
+                  <div className={`w-2 h-2 rounded-full animate-bounce ${
+                    darkMode ? 'bg-[#38bdf8]' : 'bg-[#00d4ff]'
+                  }`} style={{ animationDelay: '150ms' }} />
+                  <div className={`w-2 h-2 rounded-full animate-bounce ${
+                    darkMode ? 'bg-[#38bdf8]' : 'bg-[#00d4ff]'
+                  }`} style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+
+              {/* Steps List */}
+              <div className="space-y-2">
+                {scanSteps.map((step, index) => {
+                  const stepProgress = (progress / 100) * scanSteps.length;
+                  const isCompleted = stepProgress > index + 1;
+                  const isActive = stepProgress > index && stepProgress <= index + 1;
+                  
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
+                        isCompleted
+                          ? darkMode
+                            ? 'bg-green-900/30 border border-green-700'
+                            : 'bg-green-50 border border-green-200'
+                          : isActive
+                          ? darkMode
+                            ? 'bg-blue-900/30 border border-blue-700'
+                            : 'bg-blue-50 border border-blue-200'
+                          : darkMode
+                          ? 'bg-gray-800/50 border border-gray-700'
+                          : 'bg-gray-50 border border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center">
+                        {isCompleted ? (
+                          <svg className={`w-5 h-5 ${
+                            darkMode ? 'text-green-400' : 'text-green-600'
+                          }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : isActive ? (
+                          <div className={`w-3 h-3 rounded-full animate-pulse ${
+                            darkMode ? 'bg-blue-400' : 'bg-blue-600'
+                          }`} />
+                        ) : (
+                          <div className={`w-3 h-3 rounded-full ${
+                            darkMode ? 'bg-gray-600' : 'bg-gray-300'
+                          }`} />
+                        )}
+                      </div>
+                      <span className={`text-sm ${
+                        isCompleted
+                          ? darkMode ? 'text-green-300' : 'text-green-700'
+                          : isActive
+                          ? darkMode ? 'text-blue-300' : 'text-blue-700'
+                          : darkMode ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        {step.message}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
 
           {/* Restored Report Notice */}
           {isRestoredReport && report && (
@@ -577,6 +765,7 @@ export default function Scanner() {
                   const id = `page-${idx}`;
                   const path = (() => { try { return new URL(p.url).pathname || p.url; } catch { return p.url; } })();
                   const violations = p.violations || [];
+                  const hasScanError = p.meta?.scanError;
                   
                   return (
                     <section key={p.url || id} id={id} className={`rounded-xl shadow-lg border p-6 scroll-mt-24 ${
@@ -609,7 +798,28 @@ export default function Scanner() {
                         </div>
                       </div>
 
-                      {violations.length === 0 ? (
+                      {hasScanError ? (
+                        <div className="flex items-center justify-center p-8 text-center">
+                          <div>
+                            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${
+                              darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-500'
+                            }`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                              </svg>
+                            </div>
+                            <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                              Page not found or unable to scan
+                            </p>
+                            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {p.meta?.errorMessage || "This page could not be accessed or scanned for accessibility issues."}
+                            </p>
+                          </div>
+                        </div>
+                      ) : violations.length === 0 ? (
                         <div className="flex items-center justify-center p-8 text-center">
                           <div>
                             <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${

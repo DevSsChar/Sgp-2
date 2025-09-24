@@ -595,6 +595,7 @@ export default function ReportDetailPage() {
 
                                                     const isActive = selectedPage && selectedPage.url === page.url;
                                                     const violationCount = (page.violations || []).length;
+                                                    const hasScanError = page.meta?.scanError;
 
                                                     return (
                                                         <button
@@ -614,7 +615,12 @@ export default function ReportDetailPage() {
                                                                     }`}>
                                                                     {path}
                                                                 </span>
-                                                                {violationCount > 0 ? (
+                                                                {hasScanError ? (
+                                                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${darkMode ? "bg-gray-700 text-gray-400" : "bg-gray-200 text-gray-600"
+                                                                        }`}>
+                                                                        Error
+                                                                    </span>
+                                                                ) : violationCount > 0 ? (
                                                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${darkMode ? "bg-red-900/30 text-red-300" : "bg-red-100 text-red-700"
                                                                         }`}>
                                                                         {violationCount}
@@ -690,7 +696,27 @@ export default function ReportDetailPage() {
                                                         </div>
                                                     </div>
 
-                                                    {(selectedPage.violations || []).length === 0 ? (
+                                                    {selectedPage.meta?.scanError ? (
+                                                        <div className={`flex items-center justify-center p-10 text-center rounded-lg border ${darkMode ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-100'
+                                                            }`}>
+                                                            <div>
+                                                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${darkMode ? 'bg-red-900/50 text-red-400' : 'bg-red-100 text-red-500'
+                                                                    }`}>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                                                    </svg>
+                                                                </div>
+                                                                <h3 className={`text-lg font-medium mb-1 ${darkMode ? 'text-red-400' : 'text-red-700'
+                                                                    }`}>Page not found or unable to scan</h3>
+                                                                <p className={darkMode ? 'text-red-500' : 'text-red-600'}>
+                                                                    {selectedPage.meta?.errorMessage || "This page could not be accessed or scanned for accessibility issues."}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    ) : (selectedPage.violations || []).length === 0 ? (
                                                         <div className={`flex items-center justify-center p-10 text-center rounded-lg border ${darkMode ? 'bg-green-900/20 border-green-800' : 'bg-green-50 border-green-100'
                                                             }`}>
                                                             <div>

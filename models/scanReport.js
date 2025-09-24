@@ -32,6 +32,9 @@ const PageResultSchema = new mongoose.Schema(
       incompleteCount: { type: Number, default: 0 },
       inapplicableCount: { type: Number, default: 0 },
       tags: { type: [String], default: [] },
+      scanError: { type: Boolean, default: false },
+      errorMessage: { type: String, default: "" },
+      originalError: { type: String, default: "" },
     },
   },
   { _id: false }

@@ -97,4 +97,45 @@ function buildSummary(pages) {
   };
 }
 
-module.exports = { buildPageDoc, buildSummary };
+function buildFailedPageDoc(url, errorMessage) {
+  // Provide user-friendly error messages for common issues
+  let friendlyMessage = errorMessage || "Page not found or unable to scan";
+  
+  if (errorMessage) {
+    if (errorMessage.includes("ERR_CERT_AUTHORITY_INVALID")) {
+      friendlyMessage = "SSL certificate issue - the website's security certificate could not be verified";
+    } else if (errorMessage.includes("ERR_CERT_COMMON_NAME_INVALID")) {
+      friendlyMessage = "SSL certificate mismatch - the certificate doesn't match the domain";
+    } else if (errorMessage.includes("ERR_CERT_DATE_INVALID")) {
+      friendlyMessage = "SSL certificate expired - the website's security certificate has expired";
+    } else if (errorMessage.includes("ERR_CONNECTION_REFUSED")) {
+      friendlyMessage = "Connection refused - the website is not responding";
+    } else if (errorMessage.includes("ERR_NAME_NOT_RESOLVED")) {
+      friendlyMessage = "Domain not found - the website address could not be resolved";
+    } else if (errorMessage.includes("ERR_CONNECTION_TIMED_OUT")) {
+      friendlyMessage = "Connection timeout - the website took too long to respond";
+    } else if (errorMessage.includes("404")) {
+      friendlyMessage = "Page not found (404) - this page does not exist on the website";
+    } else if (errorMessage.includes("403")) {
+      friendlyMessage = "Access forbidden (403) - this page is restricted";
+    } else if (errorMessage.includes("500")) {
+      friendlyMessage = "Server error (500) - the website is experiencing technical difficulties";
+    }
+  }
+  
+  return {
+    url,
+    violations: [],
+    meta: {
+      passesCount: 0,
+      incompleteCount: 0,
+      inapplicableCount: 0,
+      tags: [],
+      scanError: true,
+      errorMessage: friendlyMessage,
+      originalError: errorMessage // Keep original for debugging
+    }
+  };
+}
+
+module.exports = { buildPageDoc, buildFailedPageDoc, buildSummary };
