@@ -1,10 +1,12 @@
-import { Poppins, Roboto, Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "./dark-mode.css";
+import AccessibilityChatbot from "@/components/AccessibilityChatbot";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import { ScanDataProvider } from "@/components/ScanDataContext";
 import SessionWrapper from "@/components/SessionWrapper";
 import { ThemeProvider } from "@/components/ThemeContext";
+import { Geist, Geist_Mono, Poppins, Roboto } from "next/font/google";
+import "./dark-mode.css";
+import "./globals.css";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -42,9 +44,12 @@ export default function RootLayout({ children }) {
       >
         <SessionWrapper>
           <ThemeProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            <ScanDataProvider>
+              <Navbar />
+              {children}
+              <Footer />
+              <AccessibilityChatbot />
+            </ScanDataProvider>
           </ThemeProvider>
         </SessionWrapper>
       </body>

@@ -1,6 +1,7 @@
 "use client";
 import { generateComprehensiveReportPDF } from '../utils/pdfGenerator';
 import AIFixSidebar from './AIFixSidebar';
+import { useScanData } from './ScanDataContext';
 import { useTheme } from './ThemeContext';
 
 import { motion } from "framer-motion";
@@ -196,6 +197,7 @@ function ComprehensiveReportButton({ report, url, darkMode }) {
 
 export default function Scanner() {
   const { darkMode } = useTheme();
+  const { updateScanData } = useScanData();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -216,6 +218,7 @@ export default function Scanner() {
       try {
         const parsedReport = JSON.parse(savedReport);
         setReport(parsedReport);
+        updateScanData(parsedReport); // Update scan data context for chatbot
         setUrl(savedUrl);
         setIsRestoredReport(true);
       } catch (error) {
@@ -240,6 +243,7 @@ export default function Scanner() {
     localStorage.removeItem('accessibilityReport');
     localStorage.removeItem('scannedUrl');
     setReport(null);
+    updateScanData(null); // Clear scan data context
     setUrl("");
     setIsRestoredReport(false);
     setError("");
@@ -291,6 +295,7 @@ export default function Scanner() {
     e.preventDefault();
     setError("");
     setReport(null);
+    updateScanData(null); // Clear scan data context
     setIsRestoredReport(false); // Mark this as a new scan
     
     if (!/^https?:\/\//i.test(url)) {
@@ -309,18 +314,8 @@ export default function Scanner() {
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      
-      // Complete the progress
-      clearInterval(progressInterval);
-      setProgress(100);
-      setCurrentStep("Scan completed!");
-      
-      // Brief delay to show completion
-      setTimeout(() => {
-        setReport(data);
-        setActiveTab("summary"); // Reset to summary tab
-        setLoading(false);
-      }, 800);
+      setReport(data);
+      setActiveTab("summary"); // Reset to summary tab
     } catch (e) {
       clearInterval(progressInterval);
       setError(e?.message || "Scan failed");
