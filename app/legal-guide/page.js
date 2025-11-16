@@ -101,7 +101,7 @@ export default function LegalGuide() {
         caseLawTitle: "Digital Accessibility Case Law:",
         targetCase: "Target Corp. (2006):",
         targetCaseDesc: "First major case establishing websites as places of public accommodation. Settlement required WCAG compliance.",
-        dominosCase: "Domino's Pizza (2019):",
+        dominosCase: "Domino&apos;s Pizza (2019):",
         dominosCaseDesc: "Supreme Court let stand ruling that websites must be accessible. Established precedent for digital accessibility under ADA.",
         recentTrends: "Recent Trends (2020-2024):",
         recentTrendsDesc: "Over 15,000 ADA website lawsuits filed. Average settlement ranges from $10,000 to $50,000 plus attorney fees.",
@@ -906,7 +906,7 @@ export default function LegalGuide() {
                     <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>First major case establishing websites as places of public accommodation. Settlement required WCAG compliance.</p>
                   </div>
                   <div>
-                    <p className="font-medium">Domino's Pizza (2019):</p>
+                    <p className="font-medium">Domino&apos;s Pizza (2019):</p>
                     <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Supreme Court let stand ruling that websites must be accessible. Established precedent for digital accessibility under ADA.</p>
                   </div>
                   <div>
@@ -1063,7 +1063,7 @@ export default function LegalGuide() {
                       </div>
                       <div>
                         <p className="font-medium">Others (8):</p>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Multiple sclerosis, Parkinson's, hemophilia, thalassemia, sickle cell disease</p>
+                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Multiple sclerosis, Parkinson&apos;s, hemophilia, thalassemia, sickle cell disease</p>
                       </div>
                     </div>
                   </div>

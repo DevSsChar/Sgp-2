@@ -1,0 +1,51 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Production build
+.next
+out
+dist
+build
+
+# Development
+.env
+.env.local
+.env.*.local
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.circleci
+
+# Testing
+coverage
+__tests__
+jest.config.js
+jest.setup.js
+
+# Documentation
+README.md
+*.md
+
+# Misc
+.npmrc
+.yarnrc
+temp
