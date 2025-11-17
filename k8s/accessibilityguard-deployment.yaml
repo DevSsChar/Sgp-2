@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accessibilityguard-app
+  labels:
+    app: accessibilityguard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: accessibilityguard
+  template:
+    metadata:
+      labels:
+        app: accessibilityguard
+    spec:
+      containers:
+      - name: accessibilityguard
+        image: accessibilityguard:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: OLLAMA_URL
+          value: "http://ollama-service:11434"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
