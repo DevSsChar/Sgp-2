@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/pack-extension.js && next build",
+    "pack:extension": "node scripts/pack-extension.js",
     "start": "next start",
     "lint": "next lint",
-    "scan": "node actions/backend.js"
+    "scan": "node actions/backend.js",
+    "postinstall": "npx playwright install chromium"
   },
   "dependencies": {
     "@axe-core/puppeteer": "^4.10.1",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "cheerio": "^1.0.0",
     "dotenv": "^17.2.1",
     "framer-motion": "^12.23.21",
@@ -24,10 +28,12 @@
     "next": "15.4.1",
     "next-auth": "^4.24.11",
     "path": "^0.12.7",
+    "playwright": "^1.61.1",
     "puppeteer": "^23.7.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "robots-parser": "^3.0.1"
+    "robots-parser": "^3.0.1",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

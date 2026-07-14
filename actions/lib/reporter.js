@@ -97,32 +97,114 @@ function buildSummary(pages) {
   };
 }
 
-function buildFailedPageDoc(url, errorMessage) {
-  // Provide user-friendly error messages for common issues
-  let friendlyMessage = errorMessage || "Page not found or unable to scan";
-  
+function classifyScanError(errorMessage) {
+  const originalError = errorMessage || "Scan failed";
+  let message = originalError;
+  let code = "SCAN_FAILED";
+  let type = "unknown";
+  let status = 500;
+
   if (errorMessage) {
-    if (errorMessage.includes("ERR_CERT_AUTHORITY_INVALID")) {
-      friendlyMessage = "SSL certificate issue - the website's security certificate could not be verified";
+    if (
+      /login failed|authentication|credential|password required|username field|session must|unsupported authentication/i.test(
+        errorMessage
+      )
+    ) {
+      message = originalError;
+      code = "AUTH_FAILED";
+      type = "auth";
+      status = 401;
+    } else if (/Executable doesn't exist|playwright install|browserType\.launch/i.test(errorMessage)) {
+      message =
+        "Playwright browser is not installed on the server. Run: npx playwright install chromium";
+      code = "PLAYWRIGHT_MISSING";
+      type = "auth";
+      status = 500;
+    } else if (/Protocol error.*setCookie|Invalid cookie|setCookie/i.test(errorMessage)) {
+      message =
+        "Could not apply the authenticated session to the scanner. Try importing your browser session again or re-save credentials.";
+      code = "SESSION_APPLY_FAILED";
+      type = "auth";
+      status = 401;
+    } else if (/about:blank|never loaded|has not finished loading|waitForSelector|password field|Could not find a visible password|Login page did not finish loading|Login form not found/i.test(errorMessage)) {
+      message = originalError.replace(/\u001b\[[0-9;]*m/g, "").split("Call log:")[0].trim();
+      code = "AUTH_LOGIN_FORM";
+      type = "auth";
+      status = 401;
+    } else if (/SCAN_AUTH_ENCRYPTION_KEY|secure auth storage/i.test(errorMessage)) {
+      message = "Server encryption is not configured for saving authentication profiles.";
+      code = "AUTH_STORAGE_CONFIG";
+      type = "auth";
+      status = 500;
+    } else if (errorMessage.includes("ERR_CERT_AUTHORITY_INVALID")) {
+      message = "SSL certificate issue — the website's security certificate could not be verified.";
+      code = "SSL_ERROR";
+      type = "ssl";
+      status = 502;
     } else if (errorMessage.includes("ERR_CERT_COMMON_NAME_INVALID")) {
-      friendlyMessage = "SSL certificate mismatch - the certificate doesn't match the domain";
+      message = "SSL certificate mismatch — the certificate doesn't match the domain.";
+      code = "SSL_ERROR";
+      type = "ssl";
+      status = 502;
     } else if (errorMessage.includes("ERR_CERT_DATE_INVALID")) {
-      friendlyMessage = "SSL certificate expired - the website's security certificate has expired";
+      message = "SSL certificate expired — the website's security certificate has expired.";
+      code = "SSL_ERROR";
+      type = "ssl";
+      status = 502;
     } else if (errorMessage.includes("ERR_CONNECTION_REFUSED")) {
-      friendlyMessage = "Connection refused - the website is not responding";
+      message = "Connection refused — the website is not responding. It may be offline or blocking requests.";
+      code = "CONNECTION_REFUSED";
+      type = "unreachable";
+      status = 503;
     } else if (errorMessage.includes("ERR_NAME_NOT_RESOLVED")) {
-      friendlyMessage = "Domain not found - the website address could not be resolved";
-    } else if (errorMessage.includes("ERR_CONNECTION_TIMED_OUT")) {
-      friendlyMessage = "Connection timeout - the website took too long to respond";
-    } else if (errorMessage.includes("404")) {
-      friendlyMessage = "Page not found (404) - this page does not exist on the website";
-    } else if (errorMessage.includes("403")) {
-      friendlyMessage = "Access forbidden (403) - this page is restricted";
-    } else if (errorMessage.includes("500")) {
-      friendlyMessage = "Server error (500) - the website is experiencing technical difficulties";
+      message = "Website not found — the domain could not be resolved. Please check the URL spelling and try again.";
+      code = "URL_NOT_FOUND";
+      type = "not_found";
+      status = 404;
+    } else if (errorMessage.includes("ERR_CONNECTION_TIMED_OUT") || errorMessage.includes("Navigation timeout")) {
+      message = "Connection timed out — the website took too long to respond. It may be slow or unreachable.";
+      code = "TIMEOUT";
+      type = "timeout";
+      status = 408;
+    } else if (errorMessage.includes("net::ERR_ABORTED")) {
+      message = "Request aborted — the connection to the website was interrupted.";
+      code = "REQUEST_ABORTED";
+      type = "unreachable";
+      status = 502;
+    } else if (/\b404\b/.test(errorMessage) || errorMessage.includes("Not Found")) {
+      message = "Page not found (404) — this URL does not exist on the website.";
+      code = "PAGE_NOT_FOUND";
+      type = "not_found";
+      status = 404;
+    } else if (errorMessage.includes("403") || errorMessage.includes("Forbidden")) {
+      message = "Access forbidden (403) — this page is restricted and cannot be scanned.";
+      code = "ACCESS_FORBIDDEN";
+      type = "forbidden";
+      status = 403;
+    } else if (/\b500\b/.test(errorMessage) || errorMessage.includes("Internal Server Error")) {
+      message = "Server error — the target website returned an error. The site may be experiencing issues.";
+      code = "TARGET_SERVER_ERROR";
+      type = "server_error";
+      status = 502;
+    } else if (errorMessage.includes("Invalid URL")) {
+      message = "Invalid URL — enter a valid address starting with http:// or https://.";
+      code = "INVALID_URL";
+      type = "invalid_url";
+      status = 400;
+    } else if (errorMessage.includes("No pages could be discovered")) {
+      message = "No pages found — the URL could not be reached or contains no scannable content.";
+      code = "URL_NOT_FOUND";
+      type = "not_found";
+      status = 404;
     }
   }
-  
+
+  return { message, code, type, status, originalError };
+}
+
+function buildFailedPageDoc(url, errorMessage) {
+  const { message, originalError } = classifyScanError(errorMessage);
+
   return {
     url,
     violations: [],
@@ -132,10 +214,10 @@ function buildFailedPageDoc(url, errorMessage) {
       inapplicableCount: 0,
       tags: [],
       scanError: true,
-      errorMessage: friendlyMessage,
-      originalError: errorMessage // Keep original for debugging
-    }
+      errorMessage: message,
+      originalError,
+    },
   };
 }
 
-module.exports = { buildPageDoc, buildFailedPageDoc, buildSummary };
+module.exports = { buildPageDoc, buildFailedPageDoc, buildSummary, classifyScanError };

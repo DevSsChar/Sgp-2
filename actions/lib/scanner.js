@@ -28,6 +28,15 @@ async function withPage(browser, fn) {
   await page.setExtraHTTPHeaders({
     'Accept-Language': 'en-US,en;q=0.9'
   });
+
+  const authSession = browser._authSession;
+  if (authSession && browser._authOrigin) {
+    const { applyStorage } = require("./authSession.js");
+    // Cookies from same-browser login already live in this browser's jar.
+    // Re-hydrate storage before each page for JWT / SPA auth tokens.
+    await page.goto(browser._authOrigin, { waitUntil: "domcontentloaded", timeout: 45000 }).catch(() => {});
+    await applyStorage(page, authSession);
+  }
   
   try {
     return await fn(page);
@@ -41,7 +50,24 @@ async function renderAndGetLinks(page, url, { waitUntil = "networkidle2", timeou
   await page.waitForSelector("body", { timeout: 10000 }).catch(() => {});
   await page.evaluate(() => (document && document.fonts ? document.fonts.ready : Promise.resolve())).catch(() => {});
   if (waitMs > 0) await sleep(waitMs);
-  const links = await page.evaluate(() => Array.from(document.querySelectorAll('a[href]')).map(a => a.getAttribute('href')).filter(Boolean));
+
+  // Collect links from anchors, areas, and common SPA href attributes.
+  const links = await page.evaluate(() => {
+    const hrefs = new Set();
+    for (const el of document.querySelectorAll("a[href], area[href]")) {
+      const href = el.getAttribute("href");
+      if (href) hrefs.add(href);
+    }
+    for (const el of document.querySelectorAll("[data-href], [data-url], [routerlink]")) {
+      const href =
+        el.getAttribute("href") ||
+        el.getAttribute("data-href") ||
+        el.getAttribute("data-url") ||
+        el.getAttribute("routerlink");
+      if (href) hrefs.add(href);
+    }
+    return Array.from(hrefs);
+  });
   return links;
 }
 

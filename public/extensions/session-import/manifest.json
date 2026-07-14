@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "AccessibilityGuard Session Import",
+  "version": "1.0.0",
+  "description": "One-click import of browser cookies and storage for authenticated accessibility scans.",
+  "permissions": ["cookies", "tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-bridge.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "AccessibilityGuard Session Import"
+  }
+}

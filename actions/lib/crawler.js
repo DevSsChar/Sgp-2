@@ -40,14 +40,43 @@ async function fetchRobotsTxt(baseUrl) {
   }
 }
 
-async function crawl({ startUrl, maxPages = 50, include, exclude, sameOrigin = true, respectRobots = true, enqueueRenderedLinks }) {
+async function crawl({
+  startUrl,
+  startUrls,
+  maxPages = 50,
+  include,
+  exclude,
+  sameOrigin = true,
+  respectRobots = true,
+  enqueueRenderedLinks,
+  onProgress,
+}) {
   const includeRe = wildcardToRegExp(include);
   const excludeRe = wildcardToRegExp(exclude);
-  const origin = new URL(startUrl).origin;
-  const robots = respectRobots ? await fetchRobotsTxt(startUrl) : null;
+  const primaryStart = startUrl || (Array.isArray(startUrls) && startUrls[0]);
+  if (!primaryStart) {
+    throw new Error("crawl requires startUrl or startUrls");
+  }
+  const origin = new URL(primaryStart).origin;
+  const robots = respectRobots ? await fetchRobotsTxt(primaryStart) : null;
 
-  const queue = [normalizeUrl(startUrl)].filter(Boolean);
-  const seen = new Set(queue);
+  const seedList = Array.isArray(startUrls) && startUrls.length
+    ? startUrls
+    : [startUrl];
+  const queue = [];
+  const seen = new Set();
+
+  for (const seed of seedList) {
+    const normalized = normalizeUrl(seed);
+    if (!normalized || seen.has(normalized)) continue;
+    if (sameOrigin && !isSameOrigin(origin, normalized)) continue;
+    seen.add(normalized);
+    queue.push(normalized);
+  }
+
+  if (typeof onProgress === "function" && queue[0]) {
+    onProgress({ discovered: seen.size, currentUrl: queue[0] });
+  }
 
   function allowed(u) {
     if (!u) return false;
@@ -60,6 +89,11 @@ async function crawl({ startUrl, maxPages = 50, include, exclude, sameOrigin = t
 
   while (queue.length && seen.size < maxPages) {
     const current = queue.shift();
+
+    if (typeof onProgress === "function") {
+      onProgress({ discovered: seen.size, currentUrl: current });
+    }
+
     const nextLinks = await enqueueRenderedLinks(current);
     for (const href of nextLinks) {
       const abs = normalizeUrl(new URL(href, current).toString());
@@ -68,6 +102,11 @@ async function crawl({ startUrl, maxPages = 50, include, exclude, sameOrigin = t
       if (!allowed(abs)) continue;
       seen.add(abs);
       queue.push(abs);
+
+      if (typeof onProgress === "function") {
+        onProgress({ discovered: seen.size, currentUrl: abs });
+      }
+
       if (seen.size >= maxPages) break;
     }
   }
