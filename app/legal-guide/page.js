@@ -1,12 +1,11 @@
 "use client"
-import { useTheme } from "@/components/ThemeContext";
+import PageCanvas from "@/components/layout/PageCanvas";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function LegalGuide() {
   const { data: session, status } = useSession();
-  const { darkMode } = useTheme();
   const [language, setLanguage] = useState('en');
 
   // Comprehensive translations for all content
@@ -647,142 +646,116 @@ export default function LegalGuide() {
 
   if (status === "loading") {
     return (
-      <div className={`min-h-screen pt-20 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ff] mx-auto"></div>
-            <p className="mt-4">Loading...</p>
-          </div>
+      <PageCanvas>
+        <div className="text-center py-12">
+          <div className="animate-spin h-12 w-12 border-2 border-cx-primary border-t-transparent mx-auto" />
+          <p className="mt-4 font-mono-cx text-cx-on-surface-variant">Loading...</p>
         </div>
-      </div>
+      </PageCanvas>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div className={`min-h-screen pt-20 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="text-center">
-            <div className={`max-w-md mx-auto p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
+      <PageCanvas>
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="max-w-md mx-auto p-8 hud-panel border bg-cx-surface">
               <div className="mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-[#00d4ff] mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-cx-tertiary mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
               <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
-              <p className={`mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <p className={`mb-6 text-cx-on-surface-variant`}>
                 Please sign in to access the detailed legal guidelines for web accessibility compliance.
               </p>
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/80 shadow-md transition-all duration-300 h-10 px-6 py-2"
+                className="btn-hud-primary inline-flex items-center gap-2 h-10 px-6 py-2"
               >
                 Sign In to Continue
               </Link>
             </div>
             
-            {/* Preview section */}
-            <div className={`mt-12 p-6 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Available Guidelines Preview</h2>
+            <div className="mt-12 p-6 hud-panel border bg-cx-surface">
+              <h2 className="font-mono-cx text-xl font-semibold mb-4 text-cx-on-surface">Available Guidelines Preview</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} opacity-75`}>
+                <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low opacity-75">
                   <div className="flex items-center mb-2">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span className="font-medium">{currentTranslation.wcag.title}</span>
+                    <span className="text-cx-primary mr-2">✓</span>
+                    <span className="font-medium text-cx-on-surface">{currentTranslation.wcag.title}</span>
                   </div>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Sign in to read full details...</p>
+                  <p className="text-sm text-cx-on-surface-variant">Sign in to read full details...</p>
                 </div>
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} opacity-75`}>
+                <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low opacity-75">
                   <div className="flex items-center mb-2">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span className="font-medium">{currentTranslation.ada.title}</span>
+                    <span className="text-cx-primary mr-2">✓</span>
+                    <span className="font-medium text-cx-on-surface">{currentTranslation.ada.title}</span>
                   </div>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Sign in to read full details...</p>
+                  <p className="text-sm text-cx-on-surface-variant">Sign in to read full details...</p>
                 </div>
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} opacity-75`}>
+                <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low opacity-75">
                   <div className="flex items-center mb-2">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span className="font-medium">{currentTranslation.eu.title}</span>
+                    <span className="text-cx-primary mr-2">✓</span>
+                    <span className="font-medium text-cx-on-surface">{currentTranslation.eu.title}</span>
                   </div>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Sign in to read full details...</p>
+                  <p className="text-sm text-cx-on-surface-variant">Sign in to read full details...</p>
                 </div>
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} opacity-75`}>
+                <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low opacity-75">
                   <div className="flex items-center mb-2">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span className="font-medium">{currentTranslation.india.title}</span>
+                    <span className="text-cx-primary mr-2">✓</span>
+                    <span className="font-medium text-cx-on-surface">{currentTranslation.india.title}</span>
                   </div>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Sign in to read full details...</p>
+                  <p className="text-sm text-cx-on-surface-variant">Sign in to read full details...</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </PageCanvas>
     );
   }
 
   return (
-    <div className={`min-h-screen pt-20 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <div className="max-w-6xl mx-auto px-6 py-12">
+    <PageCanvas>
         <div className="text-center mb-12">
           {/* Language Selector */}
           <div className="flex justify-center mb-6">
-            <div className={`inline-flex rounded-lg border p-1 ${
-              darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-            }`}>
+            <div className="inline-flex border border-cx-outline-variant/30 p-px bg-cx-surface-container-low gap-px">
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  language === 'en'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : darkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 font-mono-cx text-[11px] uppercase tracking-widest transition-colors ${language === 'en' ? 'bg-cx-primary-container text-cx-on-primary-container' : 'text-cx-on-surface-variant hover:text-cx-primary hover:bg-cx-surface-container'}`}
               >
                 English
               </button>
               <button
                 onClick={() => setLanguage('hi')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  language === 'hi'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : darkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 font-mono-cx text-[11px] uppercase tracking-widest transition-colors ${language === 'hi' ? 'bg-cx-primary-container text-cx-on-primary-container' : 'text-cx-on-surface-variant hover:text-cx-primary hover:bg-cx-surface-container'}`}
               >
                 हिंदी
               </button>
               <button
                 onClick={() => setLanguage('gu')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  language === 'gu'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : darkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 font-mono-cx text-[11px] uppercase tracking-widest transition-colors ${language === 'gu' ? 'bg-cx-primary-container text-cx-on-primary-container' : 'text-cx-on-surface-variant hover:text-cx-primary hover:bg-cx-surface-container'}`}
               >
                 ગુજરાતી
               </button>
             </div>
           </div>
           
-          <h1 className="text-4xl font-bold mb-4">{currentTranslation.pageTitle}</h1>
-          <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
+          <h1 className="font-mono-cx text-4xl font-bold mb-4 text-cx-primary">{currentTranslation.pageTitle}</h1>
+          <p className="font-mono-cx text-lg text-cx-on-surface-variant max-w-3xl mx-auto">
             {currentTranslation.pageSubtitle}
           </p>
         </div>
 
         <div className="grid gap-8">
           {/* WCAG 2.1 AA */}
-          <div className={`p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
+          <div className={`p-8  border border border-cx-outline-variant/30 bg-cx-surface `}>
             <div className="flex items-center mb-6">
               <span className="text-green-500 text-2xl mr-3">✓</span>
               <h2 className="text-2xl font-bold">{currentTranslation.wcag.title}</h2>
             </div>
-            <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`mb-6 text-lg text-cx-on-surface-variant`}>
               {currentTranslation.wcag.description}
             </p>
             
@@ -790,36 +763,36 @@ export default function LegalGuide() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">{currentTranslation.wcag.principles}</h3>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold text-lg mb-2">{currentTranslation.wcag.perceivable}</h4>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.perceivableItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
                     </ul>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold text-lg mb-2">{currentTranslation.wcag.operable}</h4>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.operableItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
                     </ul>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-yellow-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold text-lg mb-2">{currentTranslation.wcag.understandable}</h4>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.understandableItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
                     </ul>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-purple-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold text-lg mb-2">{currentTranslation.wcag.robust}</h4>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.robustItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
@@ -828,12 +801,12 @@ export default function LegalGuide() {
                 </div>
               </div>
 
-              <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-blue-50'} border-l-4 border-blue-500`}>
+              <div className={`p-6  border border-cx-outline-variant/20 bg-cx-surface-container-low border-l-4 border-blue-500`}>
                 <h4 className="font-semibold mb-3">{currentTranslation.wcag.newCriteriaTitle}</h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="font-medium">{currentTranslation.wcag.levelA}</p>
-                    <ul className={`mt-1 space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`mt-1 space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.levelAItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
@@ -841,7 +814,7 @@ export default function LegalGuide() {
                   </div>
                   <div>
                     <p className="font-medium">{currentTranslation.wcag.levelAA}</p>
-                    <ul className={`mt-1 space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`mt-1 space-y-1 text-cx-on-surface-variant`}>
                       {currentTranslation.wcag.levelAAItems.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
@@ -850,7 +823,7 @@ export default function LegalGuide() {
                 </div>
               </div>
 
-              <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
+              <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
                   <strong>Global Recognition:</strong> {currentTranslation.wcag.globalRecognition}
                 </p>
@@ -859,12 +832,12 @@ export default function LegalGuide() {
           </div>
 
           {/* ADA Title III */}
-          <div className={`p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
+          <div className={`p-8  border border border-cx-outline-variant/30 bg-cx-surface `}>
             <div className="flex items-center mb-6">
               <span className="text-green-500 text-2xl mr-3">✓</span>
               <h2 className="text-2xl font-bold">{currentTranslation.ada.title}</h2>
             </div>
-            <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`mb-6 text-lg text-cx-on-surface-variant`}>
               {currentTranslation.ada.description}
             </p>
             
@@ -874,7 +847,7 @@ export default function LegalGuide() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-semibold mb-3">Covered Entities:</h4>
-                    <ul className={`space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-cx-on-surface-variant`}>
                       <li>• Retail stores and shopping centers</li>
                       <li>• Hotels, restaurants, and entertainment venues</li>
                       <li>• Healthcare facilities and professional offices</li>
@@ -887,7 +860,7 @@ export default function LegalGuide() {
                   
                   <div>
                     <h4 className="font-semibold mb-3">Legal Requirements:</h4>
-                    <ul className={`space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-cx-on-surface-variant`}>
                       <li>• Equal access to goods and services</li>
                       <li>• Reasonable modifications to policies</li>
                       <li>• Effective communication with disabled persons</li>
@@ -898,20 +871,20 @@ export default function LegalGuide() {
                 </div>
               </div>
 
-              <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-red-50'} border-l-4 border-red-500`}>
+              <div className={`p-6  border border-cx-outline-variant/20 bg-cx-surface-container-low border-l-4 border-red-500`}>
                 <h4 className="font-semibold mb-3">Digital Accessibility Case Law:</h4>
                 <div className="space-y-3 text-sm">
                   <div>
                     <p className="font-medium">Target Corp. (2006):</p>
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>First major case establishing websites as places of public accommodation. Settlement required WCAG compliance.</p>
+                    <p className={`text-cx-on-surface-variant`}>First major case establishing websites as places of public accommodation. Settlement required WCAG compliance.</p>
                   </div>
                   <div>
                     <p className="font-medium">Domino&apos;s Pizza (2019):</p>
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Supreme Court let stand ruling that websites must be accessible. Established precedent for digital accessibility under ADA.</p>
+                    <p className={`text-cx-on-surface-variant`}>Supreme Court let stand ruling that websites must be accessible. Established precedent for digital accessibility under ADA.</p>
                   </div>
                   <div>
                     <p className="font-medium">Recent Trends (2020-2024):</p>
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Over 15,000 ADA website lawsuits filed. Average settlement ranges from $10,000 to $50,000 plus attorney fees.</p>
+                    <p className={`text-cx-on-surface-variant`}>Over 15,000 ADA website lawsuits filed. Average settlement ranges from $10,000 to $50,000 plus attorney fees.</p>
                   </div>
                 </div>
               </div>
@@ -919,22 +892,22 @@ export default function LegalGuide() {
               <div>
                 <h4 className="font-semibold mb-3">Compliance Best Practices:</h4>
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Technical Standards</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Follow WCAG 2.1 AA guidelines as the de facto standard referenced by courts</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Follow WCAG 2.1 AA guidelines as the de facto standard referenced by courts</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Documentation</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Maintain accessibility audits, remediation plans, and user testing records</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Maintain accessibility audits, remediation plans, and user testing records</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Ongoing Monitoring</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Regular testing with assistive technologies and disabled users</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Regular testing with assistive technologies and disabled users</p>
                   </div>
                 </div>
               </div>
 
-              <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-yellow-50'}`}>
+              <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
                   <strong>Risk Mitigation:</strong> Proactive accessibility compliance significantly reduces litigation risk and demonstrates good faith effort to accommodate disabled users.
                 </p>
@@ -943,12 +916,12 @@ export default function LegalGuide() {
           </div>
 
           {/* EU EN 301 549 */}
-          <div className={`p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
+          <div className={`p-8  border border border-cx-outline-variant/30 bg-cx-surface `}>
             <div className="flex items-center mb-6">
               <span className="text-green-500 text-2xl mr-3">✓</span>
               <h2 className="text-2xl font-bold">{currentTranslation.eu.title}</h2>
             </div>
-            <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`mb-6 text-lg text-cx-on-surface-variant`}>
               {currentTranslation.eu.description}
             </p>
             
@@ -956,9 +929,9 @@ export default function LegalGuide() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">Legal Framework & Directives:</h3>
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-3">Web Accessibility Directive (2016/2102)</h4>
-                    <ul className={`space-y-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
                       <li>• Applies to public sector websites and mobile apps</li>
                       <li>• Mandatory compliance since September 2020</li>
                       <li>• Based on WCAG 2.1 Level AA</li>
@@ -967,9 +940,9 @@ export default function LegalGuide() {
                     </ul>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-3">European Accessibility Act (2019/882)</h4>
-                    <ul className={`space-y-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
                       <li>• Applies to private sector from June 2025</li>
                       <li>• Covers e-commerce, banking, transport</li>
                       <li>• Mandatory for digital services</li>
@@ -983,10 +956,10 @@ export default function LegalGuide() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">Technical Requirements:</h3>
                 <div className="space-y-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-purple-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-2">Chapter 9: Web Content (based on WCAG 2.1)</h4>
-                    <p className={`text-sm mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Incorporates all WCAG 2.1 Level A and AA success criteria with additional EU-specific requirements:</p>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <p className={`text-sm mb-2 text-cx-on-surface-variant`}>Incorporates all WCAG 2.1 Level A and AA success criteria with additional EU-specific requirements:</p>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       <li>• Enhanced keyboard navigation requirements</li>
                       <li>• Specific color contrast measurements</li>
                       <li>• Multilingual accessibility considerations</li>
@@ -994,9 +967,9 @@ export default function LegalGuide() {
                     </ul>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-orange-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-2">Chapter 11: Software and Mobile Applications</h4>
-                    <ul className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
                       <li>• Platform-specific accessibility APIs</li>
                       <li>• Native mobile app accessibility</li>
                       <li>• Assistive technology compatibility</li>
@@ -1009,22 +982,22 @@ export default function LegalGuide() {
               <div>
                 <h4 className="font-semibold mb-3">Compliance Obligations:</h4>
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Accessibility Statement</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Detailed statement covering compliance status, non-accessible content, and feedback mechanisms</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Detailed statement covering compliance status, non-accessible content, and feedback mechanisms</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Feedback Mechanism</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Accessible way for users to report accessibility issues and request alternative formats</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Accessible way for users to report accessibility issues and request alternative formats</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Monitoring Body</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Each member state designates monitoring body for enforcement and periodic audits</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Each member state designates monitoring body for enforcement and periodic audits</p>
                   </div>
                 </div>
               </div>
 
-              <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
+              <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
                   <strong>Enforcement:</strong> Non-compliance can result in financial penalties, market restrictions, and legal action. The European Commission monitors implementation across all 27 member states.
                 </p>
@@ -1033,12 +1006,12 @@ export default function LegalGuide() {
           </div>
 
           {/* India RPwD Act */}
-          <div className={`p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
+          <div className={`p-8  border border border-cx-outline-variant/30 bg-cx-surface `}>
             <div className="flex items-center mb-6">
               <span className="text-green-500 text-2xl mr-3">✓</span>
               <h2 className="text-2xl font-bold">{currentTranslation.india.title}</h2>
             </div>
-            <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`mb-6 text-lg text-cx-on-surface-variant`}>
               {currentTranslation.india.description}
             </p>
             
@@ -1046,31 +1019,31 @@ export default function LegalGuide() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">Legislative Framework:</h3>
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-indigo-50'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h4 className="font-semibold mb-3">21 Recognized Disabilities</h4>
                     <div className="text-sm space-y-2">
                       <div>
                         <p className="font-medium">Physical Disabilities (7):</p>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Locomotor, leprosy cured, cerebral palsy, dwarfism, muscular dystrophy, acid attack victims</p>
+                        <p className={`text-cx-on-surface-variant`}>Locomotor, leprosy cured, cerebral palsy, dwarfism, muscular dystrophy, acid attack victims</p>
                       </div>
                       <div>
                         <p className="font-medium">Sensory Disabilities (2):</p>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Blindness, low vision, hearing impairment</p>
+                        <p className={`text-cx-on-surface-variant`}>Blindness, low vision, hearing impairment</p>
                       </div>
                       <div>
                         <p className="font-medium">Intellectual & Mental (4):</p>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Intellectual disability, mental illness, autism, learning disabilities</p>
+                        <p className={`text-cx-on-surface-variant`}>Intellectual disability, mental illness, autism, learning disabilities</p>
                       </div>
                       <div>
                         <p className="font-medium">Others (8):</p>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Multiple sclerosis, Parkinson&apos;s, hemophilia, thalassemia, sickle cell disease</p>
+                        <p className={`text-cx-on-surface-variant`}>Multiple sclerosis, Parkinson&apos;s, hemophilia, thalassemia, sickle cell disease</p>
                       </div>
                     </div>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-3">Digital Accessibility Mandate</h4>
-                    <ul className={`space-y-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
                       <li>• All government websites must be accessible</li>
                       <li>• Public services in accessible formats</li>
                       <li>• Digital content accessibility guidelines</li>
@@ -1085,12 +1058,12 @@ export default function LegalGuide() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">Government Guidelines & Implementation:</h3>
                 <div className="space-y-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-yellow-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-2">Guidelines for Indian Government Websites (GIGW)</h4>
                     <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="font-medium mb-1">Minimum Requirements:</p>
-                        <ul className={`space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <ul className={`space-y-1 text-cx-on-surface-variant`}>
                           <li>• WCAG 2.0 Level A compliance</li>
                           <li>• Hindi and English language support</li>
                           <li>• Mobile-responsive design</li>
@@ -1099,7 +1072,7 @@ export default function LegalGuide() {
                       </div>
                       <div>
                         <p className="font-medium mb-1">Enhanced Features:</p>
-                        <ul className={`space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <ul className={`space-y-1 text-cx-on-surface-variant`}>
                           <li>• Font size adjustment options</li>
                           <li>• High contrast themes</li>
                           <li>• Keyboard navigation</li>
@@ -1109,9 +1082,9 @@ export default function LegalGuide() {
                     </div>
                   </div>
                   
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-purple-50'}`}>
+                  <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                     <h4 className="font-semibold mb-2">Department of Empowerment of PwD Guidelines</h4>
-                    <ul className={`space-y-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
                       <li>• Accessibility audit requirements for government portals</li>
                       <li>• Training programs for web developers on accessibility</li>
                       <li>• Regular compliance monitoring and reporting</li>
@@ -1125,26 +1098,26 @@ export default function LegalGuide() {
               <div>
                 <h4 className="font-semibold mb-3">Key Provisions for Digital Accessibility:</h4>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Section 40 - Accessibility Standards</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Government shall formulate accessibility standards for physical environment, transportation, ICT and communications</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Government shall formulate accessibility standards for physical environment, transportation, ICT and communications</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Section 42 - Access to Electronic Media</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Television programs to have subtitles and sign language interpretation for hearing impaired persons</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Television programs to have subtitles and sign language interpretation for hearing impaired persons</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Section 61 - Duties of Government</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Ensure accessibility of public buildings, transport, and ICT including websites</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Ensure accessibility of public buildings, transport, and ICT including websites</p>
                   </div>
-                  <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
                     <h5 className="font-medium mb-2">Private Sector Encouragement</h5>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Act encourages private entities to follow accessibility standards and provides incentives</p>
+                    <p className={`text-sm text-cx-on-surface-variant`}>Act encourages private entities to follow accessibility standards and provides incentives</p>
                   </div>
                 </div>
               </div>
 
-              <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-orange-50'}`}>
+              <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
                   <strong>National Policy:</strong> The Act mandates that accessibility should be integral to development programs. The Digital India initiative specifically includes digital accessibility as a key component for inclusive development.
                 </p>
@@ -1154,15 +1127,15 @@ export default function LegalGuide() {
         </div>
 
         {/* Action Section */}
-        <div className={`mt-12 p-8 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg text-center`}>
+        <div className={`mt-12 p-8  border border border-cx-outline-variant/30 bg-cx-surface  text-center`}>
           <h2 className="text-2xl font-bold mb-4">{currentTranslation.cta.title}</h2>
-          <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`mb-6 text-lg text-cx-on-surface-variant`}>
             {currentTranslation.cta.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/scanner"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm bg-[#00d4ff] text-white font-semibold hover:bg-[#00d4ff]/80 shadow-md transition-all duration-300 h-12 px-8 py-2"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap  text-sm bg-cx-tertiary text-white font-semibold hover:bg-cx-tertiary/80  transition-all duration-300 h-12 px-8 py-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
@@ -1174,13 +1147,12 @@ export default function LegalGuide() {
             </Link>
             <Link
               href="/dashboard"
-              className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm border font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 h-12 px-8 py-2 ${darkMode ? 'border-gray-600 text-gray-300' : 'border-gray-300 text-gray-700'}`}
+              className="btn-hud-secondary inline-flex items-center gap-2 h-12 px-8 py-2"
             >
               {currentTranslation.dashboardButton}
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageCanvas>
   );
 }

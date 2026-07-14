@@ -1,52 +1,42 @@
 "use client";
-import React from 'react';
-import { useTheme } from './ThemeContext';
+
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { darkMode } = useTheme();
-  
+
   return (
-    <footer className={`${darkMode ? 'bg-[#00483a]' : 'bg-[#f8fafc] border-t border-gray-200'} py-16`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
-          <div className="md:col-span-2">
-            <h3 className={`font-poppins text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-[#00483a]'}`}>AccessibilityGuard</h3>
-            <p className={`font-roboto ${darkMode ? 'text-white/80' : 'text-gray-600'} mb-6 max-w-md`}>
-              Making the web accessible for everyone. Protect your business with AI-powered WCAG compliance.
-            </p>
-            <a href="#trial" className="inline-flex items-center justify-center rounded-md bg-[#00d4ff] text-white font-medium text-sm py-2 px-6 hover:bg-[#00d4ff]/90 transition-all">
-              Start Free Trial
-            </a>
+    <footer
+      className="fixed bottom-0 w-full z-[60] bg-cx-on-tertiary-fixed dark:bg-cx-surface-container-low border-t border-cx-outline-variant/30 px-4 md:px-10 py-2 backdrop-blur-xl"
+    >
+      <div className="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-4 md:gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-cx-secondary-container animate-pulse" />
+            <span className="font-mono-cx text-[10px] uppercase text-cx-primary-container dark:text-cx-primary tracking-widest">
+              System Online
+            </span>
           </div>
-          <div>
-            <h4 className={`font-poppins font-semibold mb-4 ${darkMode ? 'text-white' : 'text-[#00483a]'}`}>Product</h4>
-            <ul className={`space-y-2 font-roboto ${darkMode ? 'text-white/80' : 'text-gray-600'}`}>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#features">Features</a></li>
-              {/* <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#pricing">Pricing</a></li> */}
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">API Docs</a></li>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">Integrations</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className={`font-poppins font-semibold mb-4 ${darkMode ? 'text-white' : 'text-[#00483a]'}`}>Company</h4>
-            <ul className={`space-y-2 font-roboto ${darkMode ? 'text-white/80' : 'text-gray-600'}`}>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#about">About</a></li>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">Contact</a></li>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">Privacy</a></li>
-              <li><a className={`hover:text-[#00d4ff] transition-colors`} href="#">Terms</a></li>
-            </ul>
+          <div className="hidden lg:flex items-center gap-4 opacity-60 dark:opacity-40">
+            <span className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-tertiary-fixed-variant dark:text-cx-on-surface-variant">Node: DX-992</span>
+            <span className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-tertiary-fixed-variant dark:text-cx-on-surface-variant">Ping: 4ms</span>
           </div>
         </div>
-        <div className={`${darkMode ? 'border-white/20' : 'border-gray-200'} border-t pt-8 flex flex-col md:flex-row justify-between items-center`}>
-          <p className={`font-roboto ${darkMode ? 'text-white/60' : 'text-gray-500'} text-sm`}>
-            © {currentYear} AccessibilityGuard. All rights reserved.
-          </p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className={`${darkMode ? 'text-white/60' : 'text-gray-500'} hover:text-[#00d4ff] transition-colors`}>Twitter</a>
-            <a href="#" className={`${darkMode ? 'text-white/60' : 'text-gray-500'} hover:text-[#00d4ff] transition-colors`}>LinkedIn</a>
-            <a href="#" className={`${darkMode ? 'text-white/60' : 'text-gray-500'} hover:text-[#00d4ff] transition-colors`}>GitHub</a>
-          </div>
+
+        <div className="flex gap-4 md:gap-8 font-mono-cx text-[9px] uppercase tracking-[0.15em] text-cx-on-tertiary-fixed-variant dark:text-cx-on-surface-variant">
+          <Link href="#" className="hover:text-cx-primary transition-colors">
+            Privacy_Protocol
+          </Link>
+          <Link href="#" className="hover:text-cx-primary transition-colors">
+            Terms_of_Engagement
+          </Link>
+          <Link href="/legal-guide" className="hover:text-cx-primary transition-colors">
+            Security_Vault
+          </Link>
+        </div>
+
+        <div className="font-mono-cx text-[10px] opacity-60 dark:opacity-40 uppercase tracking-widest text-cx-on-tertiary-fixed-variant dark:text-cx-on-surface-variant">
+          © {currentYear} AG_CORE // ACCESSIBILITY_GUARD
         </div>
       </div>
     </footer>

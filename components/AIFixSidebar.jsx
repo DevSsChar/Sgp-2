@@ -1,40 +1,51 @@
 "use client";
-import { useTheme } from '@/components/ThemeContext';
-import { useState } from 'react';
+
+import ImpactBadge from "@/components/impact/ImpactBadge";
+import { useState } from "react";
+
+function SectionLabel({ children }) {
+  return (
+    <span className="font-mono-cx text-[10px] uppercase tracking-[0.25em] text-cx-primary/70">
+      {children}
+    </span>
+  );
+}
+
+function PriorityBadge({ priority }) {
+  const map = { high: "critical", medium: "serious", low: "minor" };
+  const impact = map[priority?.toLowerCase()] || "needs-review";
+  return <ImpactBadge impact={impact} className="text-[9px]" />;
+}
 
 export default function AIFixSidebar({ violations, scanUrl, isOpen, onClose }) {
   const [suggestions, setSuggestions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { darkMode } = useTheme();
+
+  const violationCount = violations?.length || 0;
 
   const generateAIFixes = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/ai-fix', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          violations: violations,
-          url: scanUrl
-        })
+      const response = await fetch("/api/ai-fix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ violations, url: scanUrl }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.details || 'Failed to generate AI suggestions');
+        throw new Error(errorData.details || "Failed to generate AI suggestions");
       }
 
       const data = await response.json();
       setSuggestions(data.suggestions);
     } catch (err) {
-      console.error('AI Fix Error:', err);
-      if (err.message.includes('ECONNREFUSED')) {
-        setError('Ollama is not running. Please start Ollama locally on port 11434.');
+      console.error("AI Fix Error:", err);
+      if (err.message.includes("ECONNREFUSED")) {
+        setError("Ollama is not running. Please start Ollama locally on port 11434.");
       } else {
         setError(err.message);
       }
@@ -43,116 +54,139 @@ export default function AIFixSidebar({ violations, scanUrl, isOpen, onClose }) {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority?.toLowerCase()) {
-      case 'high': return 'text-red-500 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
-      case 'medium': return 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
-      case 'low': return 'text-green-500 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
-      default: return 'text-gray-500 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
-    }
-  };
-
-  const getSeverityIcon = (priority) => {
-    switch (priority?.toLowerCase()) {
-      case 'high': return '🔴';
-      case 'medium': return '🟡';
-      case 'low': return '🟢';
-      default: return '⚪';
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex pointer-events-none">
-      {/* Sidebar only - no backdrop at all */}
-      <div className={`relative ml-auto w-full max-w-2xl h-full overflow-y-auto pointer-events-auto ${
-        darkMode ? 'bg-gray-900 text-white border-l border-gray-700' : 'bg-white text-gray-900 border-l border-gray-200'
-      } shadow-2xl`}>
-        
+    <div className="fixed inset-0 z-[55] pointer-events-none">
+      {/* Backdrop — below navbar, above footer */}
+      <button
+        type="button"
+        aria-label="Close AI fix panel"
+        onClick={onClose}
+        className="absolute top-14 right-0 bottom-10 left-0 bg-cx-bg/70 backdrop-blur-sm pointer-events-auto"
+      />
+
+      {/* Panel */}
+      <aside
+        className="absolute top-14 right-0 bottom-10 w-full max-w-xl flex flex-col pointer-events-auto border-l bg-cx-surface-container-low border-cx-outline-variant/40 backdrop-blur-xl"
+      >
         {/* Header */}
-        <div className={`sticky top-0 z-10 p-6 border-b ${
-          darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <span className="text-2xl">🤖</span>
-                AI Accessibility Fixes
+        <div
+          className="shrink-0 border-b border-cx-outline-variant/30 bg-cx-surface-container px-5 py-4"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 bg-cx-secondary-container animate-pulse shrink-0" />
+                <SectionLabel>Remediation engine</SectionLabel>
+              </div>
+              <h2 className="font-mono-cx text-lg font-bold uppercase tracking-tight text-cx-on-surface">
+                AI Fix Protocol
               </h2>
-              <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Powered by Qwen 2.5 • {violations?.length || 0} violations detected
+              <p className="font-mono-cx text-[11px] text-cx-on-surface-variant mt-1 truncate">
+                {scanUrl || "No target URL"}
               </p>
             </div>
             <button
+              type="button"
               onClick={onClose}
-              className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}
+              aria-label="Close panel"
+              className="shrink-0 p-2 border border-cx-outline-variant/40 text-cx-on-surface-variant hover:text-cx-primary hover:border-cx-primary/50 transition-colors"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <span className="material-symbols-outlined text-xl">close</span>
             </button>
           </div>
 
-          {/* Generate Button */}
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="border border-cx-outline-variant/30 px-3 py-2 bg-cx-surface/50">
+              <div className="font-mono-cx text-[9px] uppercase tracking-widest text-cx-on-surface-variant">
+                Violations
+              </div>
+              <div className="font-mono-cx text-lg font-bold text-cx-primary">{violationCount}</div>
+            </div>
+            <div className="border border-cx-outline-variant/30 px-3 py-2 bg-cx-surface/50">
+              <div className="font-mono-cx text-[9px] uppercase tracking-widest text-cx-on-surface-variant">
+                Model
+              </div>
+              <div className="font-mono-cx text-xs font-semibold text-cx-on-surface truncate">Qwen 2.5</div>
+            </div>
+            <div className="border border-cx-outline-variant/30 px-3 py-2 bg-cx-surface/50">
+              <div className="font-mono-cx text-[9px] uppercase tracking-widest text-cx-on-surface-variant">
+                Status
+              </div>
+              <div className="font-mono-cx text-xs font-semibold text-cx-secondary-container uppercase">
+                {loading ? "Running" : suggestions ? "Ready" : "Idle"}
+              </div>
+            </div>
+          </div>
+
           {!suggestions && !loading && (
             <button
+              type="button"
               onClick={generateAIFixes}
               disabled={!violations || violations.length === 0}
-              className="mt-4 w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
+              className="mt-4 w-full btn-cx-gradient py-2.5 px-4 text-sm font-semibold uppercase tracking-widest font-mono-cx hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Generate AI Fix Suggestions
+              <span className="material-symbols-outlined text-lg">bolt</span>
+              Generate fix suggestions
             </button>
           )}
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto px-5 py-5">
           {loading && (
-            <div className="text-center py-12">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-500 mx-auto mb-4"></div>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="relative w-14 h-14 mb-6">
+                <div className="absolute inset-0 border-2 border-cx-outline-variant/30" />
+                <div className="absolute inset-0 border-2 border-t-cx-primary animate-spin" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
+                  <span className="material-symbols-outlined text-cx-primary text-2xl">memory</span>
                 </div>
               </div>
-              <p className={`text-lg font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                AI is analyzing your accessibility violations...
+              <p className="font-mono-cx text-sm font-semibold uppercase tracking-widest text-cx-on-surface">
+                Analyzing violations
               </p>
-              <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                This may take a few moments
+              <p className="font-mono-cx text-xs text-cx-on-surface-variant mt-2 max-w-xs">
+                Neural remediation engine is processing WCAG failure patterns...
               </p>
             </div>
           )}
 
           {error && (
-            <div className={`p-6 rounded-lg border-l-4 border-red-500 ${
-              darkMode ? 'bg-red-900/20 text-red-300' : 'bg-red-50 text-red-700'
-            }`}>
+            <div className="border border-cx-error/40 bg-cx-error/10 p-4">
               <div className="flex items-start gap-3">
-                <span className="text-2xl">⚠️</span>
-                <div className="flex-1">
-                  <h3 className="font-semibold mb-2">Error generating suggestions</h3>
-                  <p className="text-sm mb-4">{error}</p>
-                  {error.includes('Ollama') && (
-                    <div className={`p-3 rounded-md ${darkMode ? 'bg-gray-800' : 'bg-gray-100'} text-sm`}>
-                      <p className="font-medium mb-2">Quick fix:</p>
+                <span className="material-symbols-outlined text-cx-error shrink-0">error</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-mono-cx text-sm font-bold uppercase tracking-wide text-cx-error mb-2">
+                    Generation failed
+                  </h3>
+                  <p className="font-mono-cx text-xs text-cx-on-surface-variant leading-relaxed mb-4">
+                    {error}
+                  </p>
+                  {error.includes("Ollama") && (
+                    <div className="border border-cx-outline-variant/30 bg-cx-surface/60 p-3 text-xs font-mono-cx text-cx-on-surface-variant">
+                      <p className="uppercase tracking-widest text-[10px] text-cx-primary mb-2">
+                        Quick fix
+                      </p>
                       <ol className="list-decimal list-inside space-y-1">
-                        <li>Open terminal/command prompt</li>
-                        <li>Run: <code className="bg-gray-700 text-white px-1 rounded">ollama serve</code></li>
-                        <li>Wait for "Ollama is running" message</li>
-                        <li>Try generating suggestions again</li>
+                        <li>Open terminal</li>
+                        <li>
+                          Run:{" "}
+                          <code className="text-cx-secondary-container">ollama serve</code>
+                        </li>
+                        <li>Wait for ready state</li>
+                        <li>Retry generation</li>
                       </ol>
                     </div>
                   )}
                   <button
+                    type="button"
                     onClick={generateAIFixes}
-                    className="mt-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
+                    className="mt-3 px-4 py-2 border border-cx-error/50 text-cx-error font-mono-cx text-xs uppercase tracking-widest hover:bg-cx-error/10 transition-colors"
                   >
-                    Try Again
+                    Try again
                   </button>
                 </div>
               </div>
@@ -160,247 +194,207 @@ export default function AIFixSidebar({ violations, scanUrl, isOpen, onClose }) {
           )}
 
           {suggestions && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Summary */}
-              <div className={`p-6 rounded-lg border ${
-                darkMode ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-200'
-              }`}>
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">📊</span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Assessment Summary</h3>
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                      {suggestions.summary}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <section className="border border-cx-primary/25 bg-cx-primary/5 p-4">
+                <SectionLabel>Assessment summary</SectionLabel>
+                <p className="font-mono-cx text-sm text-cx-on-surface-variant leading-relaxed mt-2">
+                  {suggestions.summary}
+                </p>
+              </section>
 
-              {/* Fix Suggestions */}
-              <div>
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <span className="text-2xl">🔧</span>
-                  Specific Fix Recommendations
-                </h3>
-                <div className="space-y-6">
+              {/* Fixes */}
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <SectionLabel>Fix recommendations</SectionLabel>
+                  <span className="font-mono-cx text-[10px] text-cx-on-surface-variant">
+                    {suggestions.fixes?.length || 0} rules
+                  </span>
+                </div>
+
+                <div className="space-y-4">
                   {suggestions.fixes?.map((fix, index) => (
-                    <div key={index} className={`p-6 rounded-lg border ${
-                      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                    } shadow-sm`}>
-                      
-                      {/* Rule Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-lg flex items-center gap-2">
-                          {getSeverityIcon(fix.priority)}
-                          <code className={`px-2 py-1 rounded text-sm ${
-                            darkMode ? 'bg-gray-700' : 'bg-gray-100'
-                          }`}>
-                            {fix.rule}
-                          </code>
-                          {fix.affectedElements && (
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {fix.affectedElements} elements
+                    <article
+                      key={`${fix.rule}-${index}`}
+                      className="border border-cx-outline-variant/30 bg-cx-surface/40 p-4"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
+                        <code className="font-mono-cx text-xs px-2 py-1 border border-cx-outline-variant/40 text-cx-primary bg-cx-surface/60">
+                          {fix.rule}
+                        </code>
+                        <div className="flex items-center gap-2">
+                          {fix.affectedElements != null && (
+                            <span className="font-mono-cx text-[9px] uppercase tracking-widest text-cx-on-surface-variant border border-cx-outline-variant/30 px-2 py-0.5">
+                              {fix.affectedElements} nodes
                             </span>
                           )}
-                        </h4>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(fix.priority)}`}>
-                          {fix.priority?.toUpperCase()} PRIORITY
-                        </span>
+                          <PriorityBadge priority={fix.priority} />
+                        </div>
                       </div>
 
-                      {/* User Impact */}
                       {fix.userImpact && (
-                        <div className="mb-4">
-                          <h5 className="font-medium mb-2 flex items-center gap-2">
-                            <span>👥</span>
-                            User Impact:
-                          </h5>
-                          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed text-sm`}>
+                        <div className="mb-3">
+                          <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-1">
+                            User impact
+                          </p>
+                          <p className="font-mono-cx text-xs text-cx-on-surface leading-relaxed">
                             {fix.userImpact}
                           </p>
                         </div>
                       )}
 
-                      {/* Explanation */}
-                      <div className="mb-4">
-                        <h5 className="font-medium mb-2 flex items-center gap-2">
-                          <span>💡</span>
-                          What this means:
-                        </h5>
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                      <div className="mb-3">
+                        <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-1">
+                          Explanation
+                        </p>
+                        <p className="font-mono-cx text-xs text-cx-on-surface-variant leading-relaxed">
                           {fix.explanation}
                         </p>
                       </div>
 
-                      {/* Steps */}
-                      <div className="mb-4">
-                        <h5 className="font-medium mb-3 flex items-center gap-2">
-                          <span>📝</span>
-                          How to fix:
-                        </h5>
-                        <ol className={`list-decimal list-inside space-y-2 ${
-                          darkMode ? 'text-gray-300' : 'text-gray-600'
-                        }`}>
-                          {fix.steps?.map((step, stepIndex) => (
-                            <li key={stepIndex} className="leading-relaxed">
-                              {step}
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
+                      {fix.steps?.length > 0 && (
+                        <div className="mb-3">
+                          <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-2">
+                            Remediation steps
+                          </p>
+                          <ol className="font-mono-cx text-xs text-cx-on-surface-variant space-y-1.5 list-decimal list-inside">
+                            {fix.steps.map((step, stepIndex) => (
+                              <li key={stepIndex} className="leading-relaxed">
+                                {step}
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
 
-                      {/* Code Example */}
                       {fix.codeExample && (
-                        <div className="mb-4">
-                          <h5 className="font-medium mb-3 flex items-center gap-2">
-                            <span>💻</span>
-                            Code Example:
-                          </h5>
-                          <pre className={`p-4 rounded-lg text-sm overflow-x-auto border ${
-                            darkMode ? 'bg-gray-900 text-gray-300 border-gray-700' : 'bg-gray-50 text-gray-800 border-gray-200'
-                          }`}>
+                        <div className="mb-3">
+                          <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-2">
+                            Code patch
+                          </p>
+                          <pre className="p-3 text-xs overflow-x-auto border border-cx-outline-variant/30 bg-cx-bg text-cx-secondary-container font-mono-cx leading-relaxed">
                             <code>{fix.codeExample}</code>
                           </pre>
                         </div>
                       )}
 
-                      {/* Testing Tips */}
                       {fix.testingTips && (
-                        <div className="mb-4">
-                          <h5 className="font-medium mb-2 flex items-center gap-2">
-                            <span>🧪</span>
-                            Testing:
-                          </h5>
-                          <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                        <div className="mb-3">
+                          <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-1">
+                            Verification
+                          </p>
+                          <p className="font-mono-cx text-xs text-cx-on-surface-variant leading-relaxed">
                             {fix.testingTips}
                           </p>
                         </div>
                       )}
 
-                      {/* Common Mistakes */}
                       {fix.commonMistakes && (
-                        <div className="mb-4">
-                          <h5 className="font-medium mb-2 flex items-center gap-2">
-                            <span>⚠️</span>
-                            Common Mistakes to Avoid:
-                          </h5>
-                          <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                        <div className="mb-3">
+                          <p className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-on-surface-variant mb-1">
+                            Avoid
+                          </p>
+                          <p className="font-mono-cx text-xs text-cx-on-surface-variant leading-relaxed">
                             {fix.commonMistakes}
                           </p>
                         </div>
                       )}
 
-                      {/* WCAG Reference and Additional Resources */}
-                      <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                          <div className="text-sm">
-                            <span className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              WCAG Reference: 
-                            </span>
-                            <a 
-                              href={fix.wcagReference?.startsWith('http') ? fix.wcagReference : `https://www.w3.org/WAI/WCAG21/Understanding/${fix.wcagReference}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:underline ml-1 font-medium"
-                            >
-                              {fix.wcagReference}
-                            </a>
-                          </div>
-                          {fix.additionalResources && (
-                            <div className="text-sm">
-                              <a 
-                                href={fix.additionalResources}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-purple-500 hover:underline font-medium flex items-center gap-1"
-                              >
-                                <span>📚</span>
-                                Additional Resources
-                              </a>
-                            </div>
-                          )}
+                      <div className="pt-3 border-t border-cx-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="font-mono-cx text-[10px] text-cx-on-surface-variant">
+                          WCAG:{" "}
+                          <a
+                            href={
+                              fix.wcagReference?.startsWith("http")
+                                ? fix.wcagReference
+                                : `https://www.w3.org/WAI/WCAG21/Understanding/${fix.wcagReference}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cx-primary hover:underline ml-1"
+                          >
+                            {fix.wcagReference}
+                          </a>
                         </div>
+                        {fix.additionalResources && (
+                          <a
+                            href={fix.additionalResources}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono-cx text-[10px] uppercase tracking-widest text-cx-primary hover:text-cx-secondary-container transition-colors flex items-center gap-1"
+                          >
+                            Resources
+                            <span className="material-symbols-outlined text-sm">open_in_new</span>
+                          </a>
+                        )}
                       </div>
-                    </div>
+                    </article>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              {/* General Recommendations */}
-              {suggestions.generalRecommendations && suggestions.generalRecommendations.length > 0 && (
-                <div className={`p-6 rounded-lg border ${
-                  darkMode ? 'bg-gray-800 border-gray-700' : 'bg-green-50 border-green-200'
-                }`}>
-                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                    <span className="text-2xl">💡</span>
-                    General Recommendations
-                  </h3>
-                  <ul className={`space-y-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              {suggestions.generalRecommendations?.length > 0 && (
+                <section className="border border-cx-secondary-container/30 bg-cx-secondary-container/5 p-4">
+                  <SectionLabel>General recommendations</SectionLabel>
+                  <ul className="mt-3 space-y-2">
                     {suggestions.generalRecommendations.map((rec, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-green-500 mt-1 font-bold">✓</span>
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 font-mono-cx text-xs text-cx-on-surface-variant"
+                      >
+                        <span className="text-cx-secondary-container shrink-0">›</span>
                         <span className="leading-relaxed">{rec}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </section>
               )}
 
-              {/* Priority Order */}
               {suggestions.priorityOrder && (
-                <div className={`p-6 rounded-lg border ${
-                  darkMode ? 'bg-gray-800 border-gray-700' : 'bg-purple-50 border-purple-200'
-                }`}>
-                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                    <span className="text-2xl">📋</span>
-                    Recommended Implementation Order
-                  </h3>
-                  <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                <section className="border border-cx-outline-variant/30 p-4">
+                  <SectionLabel>Implementation order</SectionLabel>
+                  <p className="font-mono-cx text-xs text-cx-on-surface-variant leading-relaxed mt-2">
                     {suggestions.priorityOrder}
                   </p>
-                </div>
+                </section>
               )}
-
-              {/* Actions */}
-              <div className="flex gap-3">
-                <button
-                  onClick={generateAIFixes}
-                  className={`flex-1 py-3 px-4 rounded-lg border border-dashed transition-colors flex items-center justify-center gap-2 ${
-                    darkMode 
-                      ? 'border-gray-600 text-gray-400 hover:border-gray-500 hover:text-gray-300' 
-                      : 'border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-700'
-                  }`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Regenerate Suggestions
-                </button>
-                <button
-                  onClick={() => {
-                    const content = JSON.stringify(suggestions, null, 2);
-                    const blob = new Blob([content], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'accessibility-fixes.json';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Export
-                </button>
-              </div>
             </div>
           )}
         </div>
-      </div>
+
+        {/* Footer actions */}
+        {suggestions && (
+          <div
+            className="shrink-0 border-t border-cx-outline-variant/30 bg-cx-surface-container px-5 py-3 flex gap-2"
+          >
+            <button
+              type="button"
+              onClick={generateAIFixes}
+              className="flex-1 py-2 px-3 border border-dashed border-cx-outline-variant text-cx-on-surface-variant font-mono-cx text-[10px] uppercase tracking-widest hover:border-cx-primary hover:text-cx-primary transition-colors flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-base">refresh</span>
+              Regenerate
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const content = JSON.stringify(suggestions, null, 2);
+                const blob = new Blob([content], { type: "application/json" });
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = blobUrl;
+                a.download = "accessibility-fixes.json";
+                a.click();
+                URL.revokeObjectURL(blobUrl);
+              }}
+              className="py-2 px-4 btn-cx-gradient font-mono-cx text-[10px] uppercase tracking-widest hover:opacity-90 flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-base">download</span>
+              Export
+            </button>
+          </div>
+        )}
+      </aside>
     </div>
   );
 }

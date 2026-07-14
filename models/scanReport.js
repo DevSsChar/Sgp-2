@@ -61,7 +61,7 @@ const SummarySchema = new mongoose.Schema(
     topRules: {
       type: [
         {
-          id: String,
+          rule: String,
           nodes: Number,
         },
       ],

@@ -13,8 +13,8 @@ export default function ThemeToggle({ className = "" }) {
       title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
       className={`relative inline-flex items-center justify-center rounded-full p-2 transition-colors ${
         darkMode 
-          ? "bg-gray-800 text-yellow-300 hover:bg-gray-700" 
-          : "bg-blue-100 text-indigo-900 hover:bg-blue-200"
+          ? "bg-cx-surface-container-high text-cx-tertiary hover:bg-cx-surface-container-highest" 
+          : "bg-cx-surface-container text-cx-primary-container hover:bg-cx-surface-container-high"
       } ${className}`}
     >
       <span className="sr-only">{darkMode ? "Switch to light mode" : "Switch to dark mode"}</span>

@@ -4,30 +4,26 @@ import Navbar from "@/components/navbar";
 import { ScanDataProvider } from "@/components/ScanDataContext";
 import SessionWrapper from "@/components/SessionWrapper";
 import { ThemeProvider } from "@/components/ThemeContext";
-import { Geist, Geist_Mono, Poppins, Roboto } from "next/font/google";
+import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import "./dark-mode.css";
 import "./globals.css";
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-poppins',
-});
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-roboto',
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sora",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-manrope",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-jetbrains",
 });
 
 export const metadata = {
@@ -38,8 +34,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${roboto.variable} antialiased`}
+        className={`${sora.variable} ${manrope.variable} ${jetbrainsMono.variable} font-body antialiased`}
         suppressHydrationWarning
       >
         <SessionWrapper>

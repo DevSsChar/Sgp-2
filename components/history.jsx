@@ -3,6 +3,8 @@ import { useTheme } from './ThemeContext';
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import PageCanvas from "./layout/PageCanvas";
+import { getImpactCountClass } from "@/utils/impactTheme";
 
 function HistoryCard({ item, index }) {
   const { darkMode } = useTheme();
@@ -46,15 +48,13 @@ function HistoryCard({ item, index }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className={`rounded-xl ${darkMode ? 'bg-gray-800 ring-gray-700' : 'bg-white ring-gray-200'} shadow-md hover:shadow-lg transition-all duration-300 ring-1 p-5 relative overflow-hidden group`}
+      className="hud-panel border p-5 relative overflow-hidden group hover:bg-cx-surface-container-low transition-colors"
     >
-      <div className={`absolute right-0 top-0 h-full w-1.5 bg-gradient-to-b ${darkMode ? 'from-[#38bdf8] to-[#0ea5e9]' : 'from-[#00d4ff] to-[#00483a]'}`}></div>
-      
       <div className="flex items-center justify-between mb-3">
-        <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <span className="font-mono-cx text-sm text-cx-on-surface-variant">
           {formatDate(item.finishedAt || item.startedAt)}
         </span>
-        <div className={`text-xs font-mono ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className="font-mono-cx text-xs text-cx-outline">
           {item.reportId.substring(0, 8)}...
         </div>
       </div>
@@ -94,34 +94,26 @@ function HistoryCard({ item, index }) {
         <div className="grid grid-cols-4 gap-1 mb-4">
           {criticalCount > 0 && (
             <div className="text-center">
-              <div className={`rounded-md px-2 py-1 text-xs font-medium mb-1 ${darkMode ? 'bg-red-900/30 text-red-300' : 'bg-red-100 text-red-800'}`}>
-                {criticalCount}
-              </div>
-              <div className={`text-[10px] ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Critical</div>
+              <div className={`px-2 py-1 text-xs font-bold mb-1 impact-count-critical font-mono-cx`}>{criticalCount}</div>
+              <div className="text-[10px] text-cx-on-surface-variant font-mono-cx uppercase">Critical</div>
             </div>
           )}
           {seriousCount > 0 && (
             <div className="text-center">
-              <div className={`rounded-md px-2 py-1 text-xs font-medium mb-1 ${darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-800'}`}>
-                {seriousCount}
-              </div>
-              <div className={`text-[10px] ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Serious</div>
+              <div className={`px-2 py-1 text-xs font-bold mb-1 impact-count-serious font-mono-cx`}>{seriousCount}</div>
+              <div className="text-[10px] text-cx-on-surface-variant font-mono-cx uppercase">Serious</div>
             </div>
           )}
           {moderateCount > 0 && (
             <div className="text-center">
-              <div className={`rounded-md px-2 py-1 text-xs font-medium mb-1 ${darkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-100 text-amber-800'}`}>
-                {moderateCount}
-              </div>
-              <div className={`text-[10px] ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Moderate</div>
+              <div className={`px-2 py-1 text-xs font-bold mb-1 ${getImpactCountClass("moderate")} font-mono-cx`}>{moderateCount}</div>
+              <div className="text-[10px] text-cx-on-surface-variant font-mono-cx uppercase">Moderate</div>
             </div>
           )}
           {minorCount > 0 && (
             <div className="text-center">
-              <div className={`rounded-md px-2 py-1 text-xs font-medium mb-1 ${darkMode ? 'bg-yellow-900/30 text-yellow-300' : 'bg-yellow-100 text-yellow-800'}`}>
-                {minorCount}
-              </div>
-              <div className={`text-[10px] ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Minor</div>
+              <div className={`px-2 py-1 text-xs font-bold mb-1 impact-count-minor font-mono-cx`}>{minorCount}</div>
+              <div className="text-[10px] text-cx-on-surface-variant font-mono-cx uppercase">Minor</div>
             </div>
           )}
         </div>
@@ -129,9 +121,7 @@ function HistoryCard({ item, index }) {
       
       <Link 
         href={`/reports/${item.reportId}`} 
-        className={`inline-flex items-center justify-center w-full ${
-          darkMode ? 'bg-[#38bdf8]/20 hover:bg-[#38bdf8]/30 text-[#38bdf8]' : 'bg-[#00d4ff]/10 hover:bg-[#00d4ff]/20 text-[#00483a]'
-        } font-medium rounded-lg px-4 py-2 transition-colors text-sm gap-1.5`}
+        className="btn-hud-secondary inline-flex items-center justify-center w-full gap-1.5"
       >
         <span>View Report</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
@@ -191,25 +181,21 @@ export default function HistoryPage() {
   };
 
   return (
-    <section className={`mt-20 md:mt-24 min-h-[calc(100vh-4rem)] ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gradient-to-b from-white to-gray-50 text-gray-900'}`}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+    <PageCanvas>
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-8 hud-panel border p-6"
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-[#38bdf8]' : 'text-[#00483a]'}`}>Scan History</h1>
-              <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-700'} mt-1`}>
+              <h1 className="font-mono-cx text-2xl md:text-3xl font-bold text-cx-primary">Scan History</h1>
+              <p className="font-mono-cx text-sm text-cx-on-surface-variant mt-1">
                 View and analyze your previous accessibility scans
               </p>
             </div>
-            <Link 
-              href="/scanner" 
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00d4ff] dark:bg-[#38bdf8] text-white font-medium px-4 py-2 hover:bg-[#00d4ff]/90 dark:hover:bg-[#38bdf8]/90 transition-colors shadow-sm text-sm"
-            >
+            <Link href="/scanner" className="btn-hud-primary inline-flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14"></path>
@@ -225,7 +211,7 @@ export default function HistoryPage() {
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 filter === "all" 
-                  ? `${darkMode ? "bg-[#38bdf8]" : "bg-[#00483a]"} text-white` 
+                  ? `${darkMode ? "bg-cx-primary" : "bg-cx-primary-container"} text-white` 
                   : `${darkMode ? "bg-gray-700 text-gray-200 hover:bg-gray-600" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`
               }`}
             >
@@ -235,7 +221,7 @@ export default function HistoryPage() {
               onClick={() => setFilter("recent")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 filter === "recent" 
-                  ? `${darkMode ? "bg-[#38bdf8]" : "bg-[#00483a]"} text-white` 
+                  ? `${darkMode ? "bg-cx-primary" : "bg-cx-primary-container"} text-white` 
                   : `${darkMode ? "bg-gray-700 text-gray-200 hover:bg-gray-600" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`
               }`}
             >
@@ -245,7 +231,7 @@ export default function HistoryPage() {
               onClick={() => setFilter("critical")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 filter === "critical" 
-                  ? `${darkMode ? "bg-[#38bdf8]" : "bg-[#00483a]"} text-white` 
+                  ? `${darkMode ? "bg-cx-primary" : "bg-cx-primary-container"} text-white` 
                   : `${darkMode ? "bg-gray-700 text-gray-200 hover:bg-gray-600" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`
               }`}
             >
@@ -271,7 +257,7 @@ export default function HistoryPage() {
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center">
-              <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${darkMode ? 'border-[#38bdf8]' : 'border-[#00d4ff]'}`}></div>
+              <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${darkMode ? 'border-cx-primary' : 'border-cx-tertiary'}`}></div>
               <p className={`mt-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading scan history...</p>
             </div>
           </div>
@@ -301,7 +287,7 @@ export default function HistoryPage() {
             <Link 
               href="/scanner" 
               className={`inline-flex items-center justify-center gap-2 rounded-lg text-white font-medium px-6 py-3 transition-colors shadow-sm ${
-                darkMode ? 'bg-[#38bdf8] hover:bg-[#38bdf8]/90' : 'bg-[#00d4ff] hover:bg-[#00d4ff]/90'
+                darkMode ? 'bg-cx-primary hover:bg-cx-primary/90' : 'bg-cx-tertiary hover:bg-cx-tertiary/90'
               }`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
@@ -334,7 +320,6 @@ export default function HistoryPage() {
             </button>
           </div>
         )}
-      </div>
-    </section>
+    </PageCanvas>
   );
 }

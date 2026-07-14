@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { autoTable } from 'jspdf-autotable';
 
 export class ComprehensiveReportPDF {
   constructor() {
@@ -15,13 +16,13 @@ export class ComprehensiveReportPDF {
 
   // Color scheme
   colors = {
-    primary: [0, 212, 255],
-    secondary: [30, 64, 175],
-    danger: [239, 68, 68],
+    primary: [134, 212, 208],
+    secondary: [1, 103, 100],
+    danger: [255, 180, 171],
     warning: [245, 158, 11],
-    success: [16, 185, 129],
-    gray: [107, 114, 128],
-    dark: [31, 41, 55]
+    success: [0, 221, 215],
+    gray: [136, 147, 146],
+    dark: [0, 32, 31],
   };
 
   // Add header with company branding
@@ -429,6 +430,118 @@ export class ComprehensiveReportPDF {
     }
   }
 
+  // Add impact summary table
+  addImpactSummary(byImpactNodes = {}) {
+    this.addSectionHeader('Violations by Impact');
+
+    const rows = [
+      ['Critical', byImpactNodes.critical ?? 0],
+      ['Serious', byImpactNodes.serious ?? 0],
+      ['Moderate', byImpactNodes.moderate ?? 0],
+      ['Minor', byImpactNodes.minor ?? 0],
+      ['Needs Review', byImpactNodes['needs-review'] ?? 0],
+    ];
+
+    autoTable(this.doc, {
+      startY: this.currentY,
+      head: [['Impact Level', 'Affected Nodes']],
+      body: rows,
+      margin: { left: this.margin, right: this.margin },
+      headStyles: { fillColor: this.colors.primary, textColor: [255, 255, 255], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      styles: { fontSize: 10, cellPadding: 4 },
+    });
+
+    this.currentY = this.doc.lastAutoTable.finalY + 12;
+  }
+
+  // Add top rules table
+  addTopRulesTable(topRules = []) {
+    if (!topRules.length) return;
+
+    this.checkPageBreak(30);
+    this.addSectionHeader('Top Violation Rules');
+
+    autoTable(this.doc, {
+      startY: this.currentY,
+      head: [['Rule', 'Affected Nodes']],
+      body: topRules.map((rule, idx) => [
+        rule.rule ?? rule.id ?? `Rule ${idx + 1}`,
+        String(rule.nodes ?? 0),
+      ]),
+      margin: { left: this.margin, right: this.margin },
+      headStyles: { fillColor: this.colors.secondary, textColor: [255, 255, 255], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      styles: { fontSize: 10, cellPadding: 4 },
+      columnStyles: { 0: { cellWidth: 'auto' }, 1: { halign: 'center', cellWidth: 40 } },
+    });
+
+    this.currentY = this.doc.lastAutoTable.finalY + 12;
+  }
+
+  buildScanExecutiveSummary(report) {
+    const summary = report.summary || {};
+    const byImpact = summary.byImpactNodes || {};
+    const totalNodes = summary.totalNodes ?? 0;
+    const totalPages = summary.pages ?? report.pages?.length ?? 0;
+    const totalRules = summary.totalRules ?? 0;
+    const critical = byImpact.critical ?? 0;
+    const serious = byImpact.serious ?? 0;
+
+    let complianceNote = 'No significant accessibility violations were detected during this scan.';
+    if (critical > 0 || serious > 0) {
+      complianceNote = `Immediate attention is recommended. The scan found ${critical} critical and ${serious} serious affected node(s) that may block users with disabilities and create compliance risk.`;
+    } else if (totalNodes > 0) {
+      complianceNote = 'Moderate and minor issues were found. Addressing these will improve usability and WCAG alignment.';
+    }
+
+    return (
+      `This report summarizes an automated accessibility scan of ${report.baseUrl || 'the target website'}. ` +
+      `${totalPages} page(s) were analyzed, with ${totalNodes} affected element(s) identified across ${totalRules} distinct rule violation(s). ` +
+      complianceNote
+    );
+  }
+
+  // Generate a professional PDF directly from scan report data
+  generateScanReport(report) {
+    const summary = report.summary || {};
+    const pages = report.pages || [];
+    const allViolations = pages.flatMap((page) => page.violations || []);
+    const scanDate = report.finishedAt || report.startedAt || new Date().toISOString();
+
+    this.addHeader('Accessibility Scan Report');
+
+    this.addInfoBox('Report Information', {
+      'Website URL': report.baseUrl || 'N/A',
+      'Report ID': report.reportId || 'N/A',
+      'Scan Date': new Date(scanDate).toLocaleString(),
+      'Pages Scanned': summary.pages ?? pages.length,
+      'Affected Nodes': summary.totalNodes ?? 0,
+      'Distinct Rules': summary.totalRules ?? 0,
+    });
+
+    this.addSectionHeader('Executive Summary');
+    this.addParagraph(this.buildScanExecutiveSummary(report));
+
+    this.addImpactSummary(summary.byImpactNodes || {});
+    this.addTopRulesTable(summary.topRules || []);
+
+    if (allViolations.length > 0) {
+      this.doc.addPage();
+      this.currentY = this.margin;
+      this.addDetailedViolationsSection(allViolations, pages);
+    }
+
+    if (pages.length > 0) {
+      this.doc.addPage();
+      this.currentY = this.margin;
+      this.addPagesSummary(pages);
+    }
+
+    this.addFooter();
+    return this.doc;
+  }
+
   // Generate complete comprehensive report
   generateReport(reportData, metadata, rawViolations = null, pages = null) {
     // Cover page
@@ -535,5 +648,13 @@ export const generateComprehensiveReportPDF = async (reportData, metadata, filen
   // Download the PDF
   doc.save(filename);
   
+  return doc;
+};
+
+// Helper function to generate and download a scan report PDF
+export const generateScanReportPDF = async (report, filename = 'accessibility-scan-report.pdf') => {
+  const pdfGenerator = new ComprehensiveReportPDF();
+  const doc = pdfGenerator.generateScanReport(report);
+  doc.save(filename);
   return doc;
 };

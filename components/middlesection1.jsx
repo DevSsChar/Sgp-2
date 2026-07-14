@@ -1,150 +1,60 @@
 "use client";
-import React from 'react';
-import { useTheme } from './ThemeContext';
-import Link from 'next/link';
 
 export default function Features() {
-  const { darkMode } = useTheme();
-  const features = [
-    {
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-8 w-8 text-cyan-400"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.3-4.3"></path>
-        </svg>
-      ),
-      title: "Automated Scanner",
-      description:
-        "Real-time WCAG 2.1 AA compliance checks across your entire website. Detect issues before they become legal problems.",
-      animationDelay: "0s",
-    },
-    {
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-8 w-8 text-lime-400"
-        >
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-      ),
-      title: "AI Remediation",
-      description:
-        "Get specific code suggestions in plain English. Our AI explains exactly what needs to be fixed and how to fix it.",
-      animationDelay: "0.2s",
-    },
-    {
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-8 w-8 text-red-400"
-        >
-          <path d="M8 2v4"></path>
-          <path d="M16 2v4"></path>
-          <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-          <path d="M3 10h18"></path>
-        </svg>
-      ),
-      title: "One-Click Fix",
-      description:
-        "Apply accessibility patches directly to your codebase with confidence. Preview changes before deployment.",
-      animationDelay: "0.4s",
-    },
-    {
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-8 w-8 text-cyan-400"
-        >
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
-      ),
-      title: "Multilingual Reports",
-      description:
-        "Generate compliance reports in English, Hindi, and Gujarati. Perfect for diverse teams and global compliance.",
-      animationDelay: "0.6s",
-    },
-  ];
-
   return (
-    <section id="features" className={`py-24 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className={`font-poppins text-4xl md:text-5xl font-bold ${darkMode ? 'text-[#38bdf8]' : 'text-[#00483a]'} mb-6`}>
-            Features That Protect <span className={`${darkMode ? 'text-cyan-300' : 'text-cyan-400'}`}>Your</span> Business
+    <section
+      id="features"
+      className="bg-cx-surface-container-lowest px-4 md:px-10 py-14 md:py-16 border-y border-cx-outline-variant/10"
+    >
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="flex flex-col justify-center">
+          <span className="font-mono-cx text-cx-primary text-[10px] mb-4 tracking-[0.35em] uppercase">
+            Visualized compliance
+          </span>
+          <h2 className="font-mono-cx text-[clamp(1.75rem,4vw,2.5rem)] leading-none mb-6 uppercase font-extrabold tracking-tighter">
+            Precision
+            <br />
+            Diagnostics
           </h2>
-          <p className={`font-roboto text-xl ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
-            Comprehensive accessibility compliance tools designed to keep you legal and inclusive
+          <p className="font-mono-cx text-cx-on-surface-variant opacity-60 max-w-sm mb-6 text-sm leading-relaxed">
+            Real-time DOM mutation monitoring. Every node analyzed. Every failure corrected
+            before the browser paints. Automated WCAG 2.1 AA compliance checks across your
+            entire website.
           </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className={`rounded-lg shadow-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
-              style={{ animationDelay: feature.animationDelay }}
-            >
-              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${darkMode ? 'from-gray-700 to-gray-800' : 'from-white to-gray-50'} shadow-md mb-6`}>
-                {feature.icon}
+          <div className="flex gap-8 border-t border-cx-outline-variant/20 pt-6">
+            <div>
+              <div className="font-mono-cx text-2xl md:text-3xl text-cx-primary font-extrabold">
+                2min
               </div>
-              <h3 className={`font-poppins text-xl font-semibold ${darkMode ? 'text-[#38bdf8]' : 'text-[#00483a]'} mb-4`}>
-                {feature.title}
-              </h3>
-              <p className={`font-roboto ${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
-                {feature.description}
-              </p>
+              <div className="font-mono-cx text-[10px] text-cx-outline-variant uppercase tracking-widest">
+                Scan Time
+              </div>
             </div>
-          ))}
+            <div>
+              <div className="font-mono-cx text-2xl md:text-3xl text-cx-primary font-extrabold">
+                100%
+              </div>
+              <div className="font-mono-cx text-[10px] text-cx-outline-variant uppercase tracking-widest">
+                Coverage
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="text-center">
-          <Link href="/scanner">
-            <button className={`inline-flex cursor-pointer items-center justify-center gap-2 ${darkMode ? 'bg-[#38bdf8] hover:bg-[#38bdf8]/80' : 'bg-[#00483a] hover:bg-[#00483a]/80'} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 h-11 rounded-md px-8 py-4 hover:scale-105`}>
-              Start Free Scan
-            </button>
-          </Link>
-          <p className={`font-roboto text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-4`}>
-            No credit card required • Get results in under 2 minutes
-          </p>
+        <div className="relative aspect-square max-w-xs mx-auto lg:max-w-none w-full border border-cx-primary/20 bg-cx-surface flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center opacity-10">
+            <div className="w-[120%] h-[120%] border border-cx-primary animate-[spin_60s_linear_infinite]" />
+          </div>
+          <div className="z-10 text-center">
+            <div className="font-mono-cx text-[clamp(3rem,10vw,5rem)] text-cx-primary leading-none font-extrabold">
+              98.2
+            </div>
+            <div className="font-mono-cx text-[10px] tracking-[0.4em] text-cx-on-surface opacity-40 uppercase">
+              Stability_Index
+            </div>
+          </div>
+          <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-cx-primary" />
+          <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-cx-primary" />
         </div>
       </div>
     </section>

@@ -2,10 +2,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useScanData } from './ScanDataContext';
-import { useTheme } from './ThemeContext';
 
 export default function AccessibilityChatbot() {
-  const { darkMode } = useTheme();
   const { scanData } = useScanData();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -132,13 +130,11 @@ export default function AccessibilityChatbot() {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-[9997] transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 w-14 h-14 shadow-lg flex items-center justify-center z-[9997] transition-all duration-300 ${
           isOpen 
-            ? 'bg-red-500 hover:bg-red-600' 
-            : darkMode
-            ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
-            : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
-        } text-white`}
+            ? 'bg-cx-error hover:bg-cx-error-container text-cx-on-error' 
+            : 'bg-cx-primary-container hover:bg-cx-primary text-cx-on-primary-container'
+        }`}
       >
         {/* Notification badge when scan data is available */}
         {scanData && (
@@ -184,28 +180,22 @@ export default function AccessibilityChatbot() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 400 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className={`fixed top-0 right-0 z-[9999] w-96 h-screen shadow-2xl border-l flex flex-col ${
-                darkMode 
-                  ? 'bg-gray-900 border-gray-700' 
-                  : 'bg-white border-gray-200'
-              }`}
+              className="fixed top-0 right-0 z-[9999] w-96 h-screen border-l border-cx-outline-variant/30 bg-cx-surface flex flex-col"
             >
             {/* Header */}
-            <div className={`flex items-center justify-between p-4 border-b ${
-              darkMode ? 'border-gray-700' : 'border-gray-200'
-            }`}>
+            <div className="flex items-center justify-between p-4 border-b border-cx-outline-variant/30">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cx-primary-container to-cx-secondary-container flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
                        stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                  <h3 className="font-mono-cx font-semibold text-cx-on-surface">
                     AccessibilityGuard AI
                   </h3>
-                  <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <p className="font-mono-cx text-xs text-cx-on-surface-variant">
                     {scanData ? 'Accessibility Expert • Scan data available' : 'Accessibility Expert'}
                   </p>
                 </div>
@@ -213,11 +203,7 @@ export default function AccessibilityChatbot() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={clearChat}
-                  className={`p-2 rounded-lg transition-colors ${
-                    darkMode 
-                      ? 'hover:bg-gray-700 text-gray-400 hover:text-gray-300' 
-                      : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                  }`}
+                  className="p-2 transition-colors hover:bg-cx-surface-container-low text-cx-on-surface-variant hover:text-cx-primary"
                   title="Clear chat"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
@@ -228,11 +214,7 @@ export default function AccessibilityChatbot() {
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className={`p-2 rounded-lg transition-colors ${
-                    darkMode 
-                      ? 'hover:bg-gray-700 text-gray-400 hover:text-gray-300' 
-                      : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                  }`}
+                  className="p-2 transition-colors hover:bg-cx-surface-container-low text-cx-on-surface-variant hover:text-cx-primary"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -247,21 +229,15 @@ export default function AccessibilityChatbot() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 h-full">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                  <div className={`max-w-[85%] px-4 py-3 border ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                      ? 'bg-cx-primary-container text-cx-on-primary-container border-cx-primary/30'
                       : message.isError
-                      ? darkMode 
-                        ? 'bg-red-900/30 text-red-300 border border-red-800'
-                        : 'bg-red-50 text-red-800 border border-red-200'
-                      : darkMode
-                      ? 'bg-gray-700 text-gray-200'
-                      : 'bg-gray-100 text-gray-800'
+                      ? 'impact-row-critical'
+                      : 'bg-cx-surface-container-low text-cx-on-surface border-cx-outline-variant/30'
                   }`}>
                     {message.hasContext && message.role === 'assistant' && (
-                      <div className={`flex items-center gap-2 mb-2 text-xs ${
-                        darkMode ? 'text-purple-300' : 'text-purple-600'
-                      }`}>
+                      <div className="flex items-center gap-2 mb-2 text-xs text-cx-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
                              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -280,13 +256,11 @@ export default function AccessibilityChatbot() {
               {/* Loading indicator */}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className={`rounded-2xl px-4 py-3 ${
-                    darkMode ? 'bg-gray-700' : 'bg-gray-100'
-                  }`}>
+                  <div className="px-4 py-3 bg-cx-surface-container-low border border-cx-outline-variant/30">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-cx-tertiary rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-2 h-2 bg-cx-tertiary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                     </div>
                   </div>
                 </div>
@@ -297,8 +271,8 @@ export default function AccessibilityChatbot() {
 
             {/* Quick Questions (shown when few messages) */}
             {messages.length <= 2 && (
-              <div className={`px-4 py-2 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                <p className={`text-xs mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div className="px-4 py-2 border-t border-cx-outline-variant/30">
+                <p className="font-mono-cx text-xs mb-2 text-cx-on-surface-variant">
                   {scanData ? 'Quick questions about your scan:' : 'Quick questions:'}
                 </p>
                 <div className="flex flex-wrap gap-1">
@@ -312,11 +286,7 @@ export default function AccessibilityChatbot() {
                     <button
                       key={index}
                       onClick={() => setInputMessage(question)}
-                      className={`text-xs px-2 py-1 rounded-full border transition-colors ${
-                        darkMode
-                          ? 'border-gray-600 text-gray-300 hover:bg-gray-700'
-                          : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                      }`}
+                      className="font-mono-cx text-xs px-2 py-1 border border-cx-outline-variant text-cx-on-surface-variant hover:bg-cx-surface-container-low transition-colors"
                     >
                       {question}
                     </button>
@@ -326,7 +296,7 @@ export default function AccessibilityChatbot() {
             )}
 
             {/* Input */}
-            <form onSubmit={sendMessage} className={`p-4 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <form onSubmit={sendMessage} className="p-4 border-t border-cx-outline-variant/30">
               <div className="flex gap-2">
                 <input
                   ref={inputRef}
@@ -335,16 +305,12 @@ export default function AccessibilityChatbot() {
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder="Ask about accessibility..."
                   disabled={isLoading}
-                  className={`flex-1 rounded-xl border px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                    darkMode
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  } disabled:opacity-50`}
+                  className="flex-1 border border-cx-outline-variant bg-cx-surface-container-low px-4 py-2 font-mono-cx text-sm text-cx-on-surface placeholder:text-cx-on-surface-variant focus:ring-2 focus:ring-cx-primary focus:border-transparent disabled:opacity-50"
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !inputMessage.trim()}
-                  className="rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed hover:from-purple-600 hover:to-blue-600 transition-all duration-300"
+                  className="btn-hud-primary px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

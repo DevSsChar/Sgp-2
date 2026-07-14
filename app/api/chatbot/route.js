@@ -21,7 +21,7 @@ export async function POST(request) {
 
     // Accessibility-focused responses
     if (msg.includes('color') || msg.includes('contrast')) {
-      response = `🎨 **Color Contrast Guidelines:**
+      response = `**Color Contrast:**
 
 • **Normal text**: Minimum 4.5:1 contrast ratio
 • **Large text**: Minimum 3:1 contrast ratio  
@@ -36,7 +36,7 @@ export async function POST(request) {
 **WCAG Reference**: Success Criterion 1.4.3 (AA)`;
 
     } else if (msg.includes('alt') || msg.includes('image')) {
-      response = `🖼️ **Alt Text Best Practices:**
+      response = `**Alt Text Best Practices:**
 
 • **Descriptive**: Explain what the image shows
 • **Concise**: Keep under 125 characters
@@ -52,7 +52,7 @@ export async function POST(request) {
 **WCAG Reference**: Success Criterion 1.1.1 (A)`;
 
     } else if (msg.includes('keyboard') || msg.includes('navigation') || msg.includes('tab')) {
-      response = `⌨️ **Keyboard Navigation Requirements:**
+      response = `**Keyboard Navigation:**
 
 • **All interactive elements** must be keyboard accessible
 • **Visible focus indicators** on all focusable elements
@@ -68,7 +68,7 @@ export async function POST(request) {
 **WCAG Reference**: Success Criteria 2.1.1, 2.1.2 (A)`;
 
     } else if (msg.includes('heading') || msg.includes('h1') || msg.includes('h2')) {
-      response = `📝 **Proper Heading Structure:**
+      response = `**Heading Structure:**
 
 • **One H1 per page** (main page title)
 • **Sequential order**: Don't skip levels (h1→h2→h3)
@@ -87,7 +87,7 @@ export async function POST(request) {
 **WCAG Reference**: Success Criteria 1.3.1, 2.4.6 (AA)`;
 
     } else if (msg.includes('form') || msg.includes('label') || msg.includes('input')) {
-      response = `📋 **Form Accessibility Essentials:**
+      response = `**Form Accessibility:**
 
 • **Every input needs a label**: Use \`<label for="id">\` or \`aria-label\`
 • **Required fields**: Mark with \`required\` attribute and visual indicators
@@ -104,7 +104,7 @@ export async function POST(request) {
 **WCAG Reference**: Success Criteria 1.3.1, 3.3.1, 3.3.2 (A/AA)`;
 
     } else if (msg.includes('critical') || msg.includes('priority') || msg.includes('fix first')) {
-      response = `🚨 **Priority Accessibility Fixes:**
+      response = `**Priority Accessibility Fixes:**
 
 ${scanData ? '**Based on your scan data:**' : '**General priority order:**'}
 
@@ -130,7 +130,7 @@ ${scanData ? '**Based on your scan data:**' : '**General priority order:**'}
 Start with Critical issues - they affect the most users!`;
 
     } else if (msg.includes('business') || msg.includes('impact') || msg.includes('legal')) {
-      response = `💼 **Business Impact of Accessibility:**
+      response = `**Business Impact:**
 
 **Legal Compliance:**
 • ADA Title III requirements (US)
@@ -153,7 +153,7 @@ Start with Critical issues - they affect the most users!`;
 **Cost of inaction** > Cost of accessibility compliance`;
 
     } else if (msg.includes('test') || msg.includes('check') || msg.includes('validate')) {
-      response = `🔍 **Accessibility Testing Methods:**
+      response = `**Accessibility Testing:**
 
 **Automated Tools:**
 • WAVE (web accessibility evaluator)
@@ -175,7 +175,7 @@ Start with Critical issues - they affect the most users!`;
 **Testing frequency**: Every sprint/release cycle`;
 
     } else if (msg.includes('wcag') || msg.includes('guidelines') || msg.includes('standard')) {
-      response = `📚 **WCAG 2.1 Guidelines Overview:**
+      response = `**WCAG 2.1 Guidelines:**
 
 **Four Principles (POUR):**
 • **Perceivable**: Content must be presentable
@@ -193,11 +193,11 @@ Start with Critical issues - they affect the most users!`;
 **Quick reference**: https://www.w3.org/WAI/WCAG21/quickref/`;
 
     } else if (msg.includes('hello') || msg.includes('hi') || msg.includes('help')) {
-      response = `👋 **Hello! I'm AccessibilityGuard AI**
+      response = `**Hello! I'm AccessibilityGuard AI**
 
 I'm your accessibility expert, ready to help you create more inclusive websites!
 
-${scanData ? '🔍 **I can see you have scan data available!** I can provide specific guidance based on your scan results.' : ''}
+${scanData ? '**Scan Data:** I can see you have scan data available! I can provide specific guidance based on your scan results.' : ''}
 
 **I can help with:**
 • WCAG 2.1 compliance guidance
@@ -216,17 +216,17 @@ What would you like to know about accessibility?`;
 
     } else {
       // Fallback response that acknowledges the specific question
-      response = `🤔 **I understand you're asking about: "${message}"**
+      response = `**Your Question:** "${message}"
 
 While I work on understanding your specific question better, here are some key accessibility principles that might help:
 
 **Quick Accessibility Checklist:**
-• ✅ All images have descriptive alt text
-• ✅ Text has sufficient color contrast (4.5:1 minimum)
-• ✅ All interactive elements work with keyboard
-• ✅ Forms have proper labels
-• ✅ Headings follow logical hierarchy
-• ✅ Focus indicators are visible
+• All images have descriptive alt text
+• Text has sufficient color contrast (4.5:1 minimum)
+• All interactive elements work with keyboard
+• Forms have proper labels
+• Headings follow logical hierarchy
+• Focus indicators are visible
 
 **For specific guidance, try asking:**
 • "How do I fix [specific issue]?"
