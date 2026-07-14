@@ -81,7 +81,11 @@ function formatLoginTime(dateString) {
   if (!dateString) return "—";
   try {
     const d = new Date(dateString);
-    return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    if (Number.isNaN(d.getTime())) return "—";
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    const ss = String(d.getSeconds()).padStart(2, "0");
+    return `${hh}:${mm}:${ss}`;
   } catch {
     return "—";
   }
@@ -173,6 +177,11 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
   const [user, setUser] = useState(userProp);
   const [reports, setReports] = useState(reportsProp);
   const [loading, setLoading] = useState(!userProp);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -180,12 +189,41 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
 
     async function load() {
       try {
-        const userData = userProp || {
+        let userData = userProp || {
           fullName: session?.user?.name || "User",
           email: session?.user?.email || "",
           scansCount: session?.user?.scansCount,
-          lastLoginAt: session?.user?.lastLoginAt || new Date().toISOString(),
+          lastLoginAt: session?.user?.lastLoginAt || null,
         };
+
+        try {
+          const meRes = await fetch("/api/user/me", {
+            signal,
+            cache: "no-store",
+            headers: { "Cache-Control": "no-cache" },
+          });
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData?.user) {
+              userData = {
+                ...userData,
+                fullName: meData.user.fullName || userData.fullName,
+                email: meData.user.email || userData.email,
+                scansCount: meData.user.scansCount ?? userData.scansCount,
+                lastLoginAt:
+                  meData.user.lastLoginAt ||
+                  meData.user.updatedAt ||
+                  meData.user.createdAt ||
+                  userData.lastLoginAt ||
+                  null,
+                latestScan: meData.user.latestScan || null,
+              };
+            }
+          }
+        } catch (error) {
+          if (error.name !== "AbortError") console.error("Error fetching user profile:", error);
+        }
+
         setUser(userData);
 
         try {
@@ -198,7 +236,6 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
             const historyData = await historyRes.json();
             if (historyData?.items?.length > 0) {
               setReports(historyData.items);
-              setLoading(false);
               return;
             }
           }
@@ -233,7 +270,7 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
 
     load();
     return () => controller.abort();
-  }, []);
+  }, [session?.user?.email]);
 
   const userHandle = useMemo(() => {
     const name = user?.fullName || session?.user?.name || "USER";
@@ -242,7 +279,8 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
 
   const stats = useMemo(() => {
     const totalScans = user?.scansCount ?? reports?.length ?? 0;
-    const lastLogin = formatLoginTime(user?.lastLoginAt || new Date().toISOString());
+    // Format only after mount so SSR HTML matches the first client render.
+    const lastLogin = hasMounted ? formatLoginTime(user?.lastLoginAt) : "—";
 
     let lastReportDate = "—";
     const latestTs =
@@ -250,13 +288,13 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
       reports[0]?.createdAt ||
       reports[0]?.finishedAt ||
       reports[0]?.startedAt;
-    if (latestTs) lastReportDate = formatReportDate(latestTs);
+    if (hasMounted && latestTs) lastReportDate = formatReportDate(latestTs);
 
     const totalIssues = reports.reduce((sum, r) => sum + getIssuesCount(r), 0);
     const criticalIssues = reports.reduce((sum, r) => sum + getCriticalCount(r), 0);
 
     return { totalScans, lastLogin, lastReportDate, totalIssues, criticalIssues };
-  }, [user, reports]);
+  }, [user, reports, hasMounted]);
 
   const tableReports = useMemo(
     () => reports.slice(0, 5).map((report, index) => {
@@ -268,12 +306,14 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
         domain: getDomain(url),
         score,
         status,
-        date: formatTableDate(report.createdAt || report.finishedAt || report.startedAt),
+        date: hasMounted
+          ? formatTableDate(report.createdAt || report.finishedAt || report.startedAt)
+          : "—",
         link: getReportLink(report, index),
         barVariant: score < 50 ? "error" : "good",
       };
     }),
-    [reports, darkMode]
+    [reports, darkMode, hasMounted]
   );
 
   const beforeBars = [100, 85, 90, 95, 80, 75, 88, 92];
@@ -341,7 +381,9 @@ export default function UserDashboard({ user: userProp = null, reports: reportsP
             <span className="font-mono-cx text-2xl font-bold text-cx-on-surface tracking-tight">
               {stats.lastLogin}
             </span>
-            <span className="font-mono-cx text-[10px] text-cx-on-surface-variant">UTC</span>
+            {stats.lastLogin !== "—" && (
+              <span className="font-mono-cx text-[10px] text-cx-on-surface-variant">LOCAL</span>
+            )}
           </div>
         </StatPanel>
 

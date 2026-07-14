@@ -84,6 +84,8 @@ export const authOptions = {
       // Attach to NextAuth's user object for jwt callback
       user.id = dbUser._id.toString();
       user.role = dbUser.role;
+      user.lastLoginAt = dbUser.lastLoginAt;
+      user.scansCount = dbUser.scansCount;
 
       return true;
     },
@@ -92,6 +94,10 @@ export const authOptions = {
       if (user) {
         token.userId = user.id;
         token.role = user.role || "user";
+        token.lastLoginAt = user.lastLoginAt
+          ? new Date(user.lastLoginAt).toISOString()
+          : new Date().toISOString();
+        if (user.scansCount !== undefined) token.scansCount = user.scansCount;
       }
       return token;
     },
@@ -100,6 +106,8 @@ export const authOptions = {
       if (session?.user) {
         session.user.id = token.userId;
         session.user.role = token.role || "user";
+        if (token.lastLoginAt) session.user.lastLoginAt = token.lastLoginAt;
+        if (token.scansCount !== undefined) session.user.scansCount = token.scansCount;
       }
       return session;
     },

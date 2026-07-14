@@ -11,8 +11,8 @@ export async function GET() {
 
   await connectDB();
   const user = await User.findOne({ email: session.user.email })
-    // .populate("latestScan", "createdAt")
-    // .lean();
+    .populate("latestScan", "createdAt finishedAt startedAt")
+    .lean();
 
   return new Response(JSON.stringify({ user }), {
     status: 200,

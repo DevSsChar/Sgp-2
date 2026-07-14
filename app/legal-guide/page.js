@@ -843,73 +843,67 @@ export default function LegalGuide() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-4">Legal Framework & Coverage:</h3>
+                <h3 className="text-xl font-semibold mb-4">{currentTranslation.ada.legalFramework}</h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold mb-3">Covered Entities:</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.ada.coveredEntities}</h4>
                     <ul className={`space-y-2 text-cx-on-surface-variant`}>
-                      <li>• Retail stores and shopping centers</li>
-                      <li>• Hotels, restaurants, and entertainment venues</li>
-                      <li>• Healthcare facilities and professional offices</li>
-                      <li>• Banks and financial institutions</li>
-                      <li>• Educational institutions (private)</li>
-                      <li>• Transportation services</li>
-                      <li>• Insurance offices and real estate agencies</li>
+                      {currentTranslation.ada.coveredEntitiesList.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold mb-3">Legal Requirements:</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.ada.legalRequirements}</h4>
                     <ul className={`space-y-2 text-cx-on-surface-variant`}>
-                      <li>• Equal access to goods and services</li>
-                      <li>• Reasonable modifications to policies</li>
-                      <li>• Effective communication with disabled persons</li>
-                      <li>• Auxiliary aids when necessary</li>
-                      <li>• No discrimination in full enjoyment</li>
+                      {currentTranslation.ada.legalRequirementsList.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div className={`p-6  border border-cx-outline-variant/20 bg-cx-surface-container-low border-l-4 border-red-500`}>
-                <h4 className="font-semibold mb-3">Digital Accessibility Case Law:</h4>
+                <h4 className="font-semibold mb-3">{currentTranslation.ada.caseLawTitle}</h4>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium">Target Corp. (2006):</p>
-                    <p className={`text-cx-on-surface-variant`}>First major case establishing websites as places of public accommodation. Settlement required WCAG compliance.</p>
+                    <p className="font-medium">{currentTranslation.ada.targetCase}</p>
+                    <p className={`text-cx-on-surface-variant`}>{currentTranslation.ada.targetCaseDesc}</p>
                   </div>
                   <div>
-                    <p className="font-medium">Domino&apos;s Pizza (2019):</p>
-                    <p className={`text-cx-on-surface-variant`}>Supreme Court let stand ruling that websites must be accessible. Established precedent for digital accessibility under ADA.</p>
+                    <p className="font-medium">{currentTranslation.ada.dominosCase}</p>
+                    <p className={`text-cx-on-surface-variant`}>{currentTranslation.ada.dominosCaseDesc}</p>
                   </div>
                   <div>
-                    <p className="font-medium">Recent Trends (2020-2024):</p>
-                    <p className={`text-cx-on-surface-variant`}>Over 15,000 ADA website lawsuits filed. Average settlement ranges from $10,000 to $50,000 plus attorney fees.</p>
+                    <p className="font-medium">{currentTranslation.ada.recentTrends}</p>
+                    <p className={`text-cx-on-surface-variant`}>{currentTranslation.ada.recentTrendsDesc}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-3">Compliance Best Practices:</h4>
+                <h4 className="font-semibold mb-3">{currentTranslation.ada.complianceBest}</h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Technical Standards</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Follow WCAG 2.1 AA guidelines as the de facto standard referenced by courts</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.ada.technicalStandards}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.ada.technicalStandardsDesc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Documentation</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Maintain accessibility audits, remediation plans, and user testing records</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.ada.documentation}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.ada.documentationDesc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Ongoing Monitoring</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Regular testing with assistive technologies and disabled users</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.ada.ongoingMonitoring}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.ada.ongoingMonitoringDesc}</p>
                   </div>
                 </div>
               </div>
 
               <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
-                  <strong>Risk Mitigation:</strong> Proactive accessibility compliance significantly reduces litigation risk and demonstrates good faith effort to accommodate disabled users.
+                  <strong>Risk Mitigation:</strong> {currentTranslation.ada.riskMitigation}
                 </p>
               </div>
             </div>
@@ -927,79 +921,73 @@ export default function LegalGuide() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-4">Legal Framework & Directives:</h3>
+                <h3 className="text-xl font-semibold mb-4">{currentTranslation.eu.legalFramework}</h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-3">Web Accessibility Directive (2016/2102)</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.eu.webDirective}</h4>
                     <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
-                      <li>• Applies to public sector websites and mobile apps</li>
-                      <li>• Mandatory compliance since September 2020</li>
-                      <li>• Based on WCAG 2.1 Level AA</li>
-                      <li>• Requires accessibility statements</li>
-                      <li>• Annual monitoring and reporting</li>
+                      {currentTranslation.eu.webDirectiveItems.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                   
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-3">European Accessibility Act (2019/882)</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.eu.accessibilityAct}</h4>
                     <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
-                      <li>• Applies to private sector from June 2025</li>
-                      <li>• Covers e-commerce, banking, transport</li>
-                      <li>• Mandatory for digital services</li>
-                      <li>• Harmonized accessibility requirements</li>
-                      <li>• Enforcement through market surveillance</li>
+                      {currentTranslation.eu.accessibilityActItems.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-4">Technical Requirements:</h3>
+                <h3 className="text-xl font-semibold mb-4">{currentTranslation.eu.technicalRequirements}</h3>
                 <div className="space-y-4">
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-2">Chapter 9: Web Content (based on WCAG 2.1)</h4>
-                    <p className={`text-sm mb-2 text-cx-on-surface-variant`}>Incorporates all WCAG 2.1 Level A and AA success criteria with additional EU-specific requirements:</p>
+                    <h4 className="font-semibold mb-2">{currentTranslation.eu.chapter9}</h4>
+                    <p className={`text-sm mb-2 text-cx-on-surface-variant`}>{currentTranslation.eu.chapter9Desc}</p>
                     <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
-                      <li>• Enhanced keyboard navigation requirements</li>
-                      <li>• Specific color contrast measurements</li>
-                      <li>• Multilingual accessibility considerations</li>
-                      <li>• Additional timing and session requirements</li>
+                      {currentTranslation.eu.chapter9Items.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                   
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-2">Chapter 11: Software and Mobile Applications</h4>
+                    <h4 className="font-semibold mb-2">{currentTranslation.eu.chapter11}</h4>
                     <ul className={`text-sm space-y-1 text-cx-on-surface-variant`}>
-                      <li>• Platform-specific accessibility APIs</li>
-                      <li>• Native mobile app accessibility</li>
-                      <li>• Assistive technology compatibility</li>
-                      <li>• User preference settings respect</li>
+                      {currentTranslation.eu.chapter11Items.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-3">Compliance Obligations:</h4>
+                <h4 className="font-semibold mb-3">{currentTranslation.eu.complianceObligations}</h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Accessibility Statement</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Detailed statement covering compliance status, non-accessible content, and feedback mechanisms</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.eu.accessibilityStatement}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.eu.accessibilityStatementDesc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Feedback Mechanism</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Accessible way for users to report accessibility issues and request alternative formats</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.eu.feedbackMechanism}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.eu.feedbackMechanismDesc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Monitoring Body</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Each member state designates monitoring body for enforcement and periodic audits</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.eu.monitoringBody}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.eu.monitoringBodyDesc}</p>
                   </div>
                 </div>
               </div>
 
               <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
-                  <strong>Enforcement:</strong> Non-compliance can result in financial penalties, market restrictions, and legal action. The European Commission monitors implementation across all 27 member states.
+                  <strong>Enforcement:</strong> {currentTranslation.eu.enforcement}
                 </p>
               </div>
             </div>
@@ -1017,109 +1005,102 @@ export default function LegalGuide() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-4">Legislative Framework:</h3>
+                <h3 className="text-xl font-semibold mb-4">{currentTranslation.india.legislativeFramework}</h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h4 className="font-semibold mb-3">21 Recognized Disabilities</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.india.recognizedDisabilities}</h4>
                     <div className="text-sm space-y-2">
                       <div>
-                        <p className="font-medium">Physical Disabilities (7):</p>
-                        <p className={`text-cx-on-surface-variant`}>Locomotor, leprosy cured, cerebral palsy, dwarfism, muscular dystrophy, acid attack victims</p>
+                        <p className="font-medium">{currentTranslation.india.physicalDisabilities}</p>
+                        <p className={`text-cx-on-surface-variant`}>{currentTranslation.india.physicalDisabilitiesDesc}</p>
                       </div>
                       <div>
-                        <p className="font-medium">Sensory Disabilities (2):</p>
-                        <p className={`text-cx-on-surface-variant`}>Blindness, low vision, hearing impairment</p>
+                        <p className="font-medium">{currentTranslation.india.sensoryDisabilities}</p>
+                        <p className={`text-cx-on-surface-variant`}>{currentTranslation.india.sensoryDisabilitiesDesc}</p>
                       </div>
                       <div>
-                        <p className="font-medium">Intellectual & Mental (4):</p>
-                        <p className={`text-cx-on-surface-variant`}>Intellectual disability, mental illness, autism, learning disabilities</p>
+                        <p className="font-medium">{currentTranslation.india.intellectualMental}</p>
+                        <p className={`text-cx-on-surface-variant`}>{currentTranslation.india.intellectualMentalDesc}</p>
                       </div>
                       <div>
-                        <p className="font-medium">Others (8):</p>
-                        <p className={`text-cx-on-surface-variant`}>Multiple sclerosis, Parkinson&apos;s, hemophilia, thalassemia, sickle cell disease</p>
+                        <p className="font-medium">{currentTranslation.india.others}</p>
+                        <p className={`text-cx-on-surface-variant`}>{currentTranslation.india.othersDesc}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-3">Digital Accessibility Mandate</h4>
+                    <h4 className="font-semibold mb-3">{currentTranslation.india.digitalAccessibility}</h4>
                     <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
-                      <li>• All government websites must be accessible</li>
-                      <li>• Public services in accessible formats</li>
-                      <li>• Digital content accessibility guidelines</li>
-                      <li>• Barrier-free access to information</li>
-                      <li>• Sign language interpretation for videos</li>
-                      <li>• Screen reader compatible interfaces</li>
+                      {currentTranslation.india.digitalAccessibilityItems.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-4">Government Guidelines & Implementation:</h3>
+                <h3 className="text-xl font-semibold mb-4">{currentTranslation.india.govGuidelines}</h3>
                 <div className="space-y-4">
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-2">Guidelines for Indian Government Websites (GIGW)</h4>
+                    <h4 className="font-semibold mb-2">{currentTranslation.india.gigw}</h4>
                     <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="font-medium mb-1">Minimum Requirements:</p>
+                        <p className="font-medium mb-1">{currentTranslation.india.minimumRequirements}</p>
                         <ul className={`space-y-1 text-cx-on-surface-variant`}>
-                          <li>• WCAG 2.0 Level A compliance</li>
-                          <li>• Hindi and English language support</li>
-                          <li>• Mobile-responsive design</li>
-                          <li>• Text-to-speech functionality</li>
+                          {currentTranslation.india.minimumRequirementsItems.map((item, index) => (
+                            <li key={index}>• {item}</li>
+                          ))}
                         </ul>
                       </div>
                       <div>
-                        <p className="font-medium mb-1">Enhanced Features:</p>
+                        <p className="font-medium mb-1">{currentTranslation.india.enhancedFeatures}</p>
                         <ul className={`space-y-1 text-cx-on-surface-variant`}>
-                          <li>• Font size adjustment options</li>
-                          <li>• High contrast themes</li>
-                          <li>• Keyboard navigation</li>
-                          <li>• Audio descriptions for media</li>
+                          {currentTranslation.india.enhancedFeaturesItems.map((item, index) => (
+                            <li key={index}>• {item}</li>
+                          ))}
                         </ul>
                       </div>
                     </div>
                   </div>
                   
                   <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
-                    <h4 className="font-semibold mb-2">Department of Empowerment of PwD Guidelines</h4>
+                    <h4 className="font-semibold mb-2">{currentTranslation.india.deptGuidelines}</h4>
                     <ul className={`space-y-2 text-sm text-cx-on-surface-variant`}>
-                      <li>• Accessibility audit requirements for government portals</li>
-                      <li>• Training programs for web developers on accessibility</li>
-                      <li>• Regular compliance monitoring and reporting</li>
-                      <li>• User feedback mechanisms for accessibility issues</li>
-                      <li>• Integration with Accessible India Campaign (Sugamya Bharat Abhiyan)</li>
+                      {currentTranslation.india.deptGuidelinesItems.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-3">Key Provisions for Digital Accessibility:</h4>
+                <h4 className="font-semibold mb-3">{currentTranslation.india.keyProvisions}</h4>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Section 40 - Accessibility Standards</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Government shall formulate accessibility standards for physical environment, transportation, ICT and communications</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.india.section40}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.india.section40Desc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Section 42 - Access to Electronic Media</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Television programs to have subtitles and sign language interpretation for hearing impaired persons</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.india.section42}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.india.section42Desc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Section 61 - Duties of Government</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Ensure accessibility of public buildings, transport, and ICT including websites</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.india.section61}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.india.section61Desc}</p>
                   </div>
                   <div className="p-4 border border-cx-outline-variant/20 bg-cx-surface-container-low">
-                    <h5 className="font-medium mb-2">Private Sector Encouragement</h5>
-                    <p className={`text-sm text-cx-on-surface-variant`}>Act encourages private entities to follow accessibility standards and provides incentives</p>
+                    <h5 className="font-medium mb-2">{currentTranslation.india.privateSector}</h5>
+                    <p className={`text-sm text-cx-on-surface-variant`}>{currentTranslation.india.privateSectorDesc}</p>
                   </div>
                 </div>
               </div>
 
               <div className={`p-4  border border-cx-outline-variant/20 bg-cx-surface-container-low`}>
                 <p className="text-sm font-medium">
-                  <strong>National Policy:</strong> The Act mandates that accessibility should be integral to development programs. The Digital India initiative specifically includes digital accessibility as a key component for inclusive development.
+                  <strong>National Policy:</strong> {currentTranslation.india.nationalPolicy}
                 </p>
               </div>
             </div>

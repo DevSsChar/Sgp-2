@@ -1,317 +1,296 @@
-# AccessibilityGuard – Landing • Auth • Scanner • Reports • Dashboard
+<p align="center">
+  <img src="./public/images/accessibilityguard_logo-removebg-preview.png" alt="AccessibilityGuard Logo" width="220" />
+</p>
 
-[![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-20232a?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![NextAuth.js](https://img.shields.io/badge/NextAuth.js-0F172A?style=flat-square&logo=nextdotjs&logoColor=white)](https://next-auth.js.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white)](https://www.framer.com/motion/)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
+# 🛡️ AccessibilityGuard
 
-Accessible web-scanning with a polished landing page, OAuth login, live scanner, detailed reports (pages, violations, stats), history, and a theme-aware dashboard.
+### *Clinical Brutalist HUD Web Accessibility Audit & AI Remediation Platform*
 
-Live wireframe reference: https://preview--access-ai-guardian-ui.lovable.app/
+Accessible web crawling, real-time accessibility scans (Axe-Core), deep WCAG audits, offline PDF generation, and automated AI code remedies—all packed into a highly polished, responsive HUD console.
 
 ---
 
-## What's New (Sep 2025)
+## 🛠️ Tech Stack
 
-- Light mode polish: consistent backgrounds, borders, text contrast, and hover states across all components
-- Dark mode refinements for the report view (cards, headers, badges, tags, nodes drawer)
-- Violations tab: card layout, tags, help links, page-path chips, nodes count, and filters reworked for both themes
-- Pages tab: searchable page list with active state; issue counts; node details with code samples
-- Dashboard: "Last Login" and "Last Report" wired and theme-friendly; cleaned quick actions and lists
-- Dashboard enhancements: before/after comparisons and legal risk mitigation sections with ADA compliance data
-- **Error handling improvements**: Pages that cannot be accessed (404, timeout, SSL certificate issues, etc.) now display user-friendly error messages instead of being silently skipped
-- Theme system: single source of truth via ThemeContext + ThemeToggle; no raw `dark:` classes coupled to Tailwind element scope
-- Consistent stat cards across Scanner, Report, Dashboard
-- Resilient formatting helpers (date/time) and robust URL/path handling in lists
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![NextAuth.js](https://img.shields.io/badge/NextAuth.js-0F172A?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://next-auth.js.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Puppeteer](https://img.shields.io/badge/Puppeteer-40B5A4?style=for-the-badge&logo=puppeteer&logoColor=white)](https://pptr.dev/)
+[![Axe-Core](https://img.shields.io/badge/Axe--Core-5B2D90?style=for-the-badge&logo=accessibility&logoColor=white)](https://github.com/dequelabs/axe-core)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](./browser-extension)
 
 ---
 
-## Highlights
+## 🎯 Key Capabilities
 
-- Hero with accessibility-themed imagery and gradient overlay
-- URL input + "Scan My Website" CTA
-- Feature grid (Automated Scanner, AI Remediation, One‑Click Fix, Multilingual Reports)
-- "How It Works" steps with connecting gradient
-- OAuth login (GitHub, Google) via NextAuth
-- User Dashboard with stats (Total Scans, Last Login, Last Report), recent reports list, before/after comparisons, and legal risk mitigation insights
-- Full Report view with tabs:
-  - Summary: report meta, violation overview, top rules
-  - Pages: searchable, issue counts, node details, code excerpts, **error handling for inaccessible pages**
-  - Violations: global search/filter, impact summaries, per-violation cards
-- Theme-aware light/dark UI everywhere
+1. **Automated Multi-Page Crawler**
+   - Crawls site structure starting from seed URLs via [actions/lib/crawler.js](file:///e:/SGP4/Sgp-2/actions/lib/crawler.js).
+   - Supports glob pattern rules (`--include` / `--exclude`) for scoping audits.
+   - Respects `robots.txt` directives (can be toggled).
 
----
+2. **Puppeteer & Axe-Core Scanner**
+   - Headless or headful browser scanning utilizing Axe-Core rulesets via [actions/lib/scanner.js](file:///e:/SGP4/Sgp-2/actions/lib/scanner.js).
+   - Configurable selectors, timeouts, and page render delays.
+   - Ignores SSL/TLS handshake certificates dynamically to prevent scan blocks on local staging sites.
 
-## Tech Stack
+3. **Advanced Session & Authentication Import**
+   - Save credentials, login URLs, and custom DOM selectors (username, password, submit) for automated scanning of secured or paywalled pages using [components/ScannerAuthPanel.jsx](file:///e:/SGP4/Sgp-2/components/ScannerAuthPanel.jsx).
+   - Dynamic **Browser Session Import Companion Extension** (located in [browser-extension/](file:///e:/SGP4/Sgp-2/browser-extension/)) intercepts target sites to grab cookies, localStorage, and sessionStorage, exporting them directly into the scanner to bypass multi-factor authentication (MFA) and single-sign-on (SSO) login loops.
 
-- Next.js (App Router)
-- React (Client Components)
-- Tailwind CSS
-- next-auth (GitHub, Google)
-- MongoDB via Mongoose
-- framer-motion (subtle transitions)
-- next/font (Poppins, Roboto)
+4. **Enterprise-Grade Resilient Error Classification**
+   - Detects and categorizes connection timeouts, 404/403/500 HTTP failures, DNS errors (`ERR_NAME_NOT_RESOLVED`), and certificate errors using [actions/lib/reporter.js](file:///e:/SGP4/Sgp-2/actions/lib/reporter.js).
+   - Failed pages are recorded in reports with precise error metadata rather than being skipped silently, and they are highlighted in red on dashboard reports.
 
----
+5. **AI Accessibility Remediation & Chatbot Companion**
+   - AI remediation routes ([app/api/ai-fix/route.js](file:///e:/SGP4/Sgp-2/app/api/ai-fix/route.js)) analyze HTML snippets of Axe violations and suggest accessible replacement code.
+   - Integrated chatbot ([components/AccessibilityChatbot.jsx](file:///e:/SGP4/Sgp-2/components/AccessibilityChatbot.jsx)) queries reports with natural language context to guide developers.
 
-## Project Structure
+6. **Clinical Brutalist HUD Theme System**
+   - Polished dark and light themes (based on [DESIGN-dark.md](file:///e:/SGP4/Sgp-2/DESIGN-dark.md) and [DESIGN-light.md](file:///e:/SGP4/Sgp-2/DESIGN-light.md)) implemented dynamically via [components/ThemeContext.js](file:///e:/SGP4/Sgp-2/components/ThemeContext.js).
+   - All elements, including the recent reports list, status tags, charts, and progress bars, enforce high color-contrast ratio compliance (WCAG 2.1 AA/AAA guidelines) in both modes.
 
-- App shell and global styles
-  - app/layout.js
-  - app/page.js
-  - app/globals.css
-  - app/dark-mode.css
-- UI components
-  - components/HeroSection.jsx
-  - components/middlesection1.jsx
-  - components/belowsection1.jsx
-  - components/navbar.jsx
-  - components/footer.jsx
-  - components/login.jsx
-  - components/dashboard.jsx
-  - components/history.jsx
-  - components/scanner.jsx
-  - components/report.jsx
-  - components/ThemeContext.js
-  - components/ThemeToggle.jsx
-  - components/SessionWrapper.js
-- App routes
-  - app/login/page.js
-  - app/dashboard/page.js
-  - app/history/page.js
-  - app/scanner/page.js
-  - app/reports/[id]/page.js
-- API
-  - app/api/auth/[...nextauth]/route.js
-  - app/api/user/me/route.js
-  - app/api/reports/[id]/route.js
-  - app/api/scan/route.js
-- Data
-  - db/connectDB.mjs
-  - models/user.js
-  - models/scanReport.js (optional when persisting reports)
+7. **PDF Audit Exporter**
+   - Client-side offline PDF generation using `jspdf` and `jspdf-autotable` via [utils/pdfGenerator.js](file:///e:/SGP4/Sgp-2/utils/pdfGenerator.js).
 
 ---
 
-## Theming (Light & Dark)
+## 🏗️ Architecture & Project Directory
 
-The entire UI is theme-aware using a context, not Tailwind's global `dark` selector, to avoid hydration drift.
+### Data & Crawl Flow
+```mermaid
+graph TD
+  A[Scanner Setup URL] --> B[Crawling Phase - crawler.js]
+  B --> C[Auth Profile Injection - authSession.js]
+  C --> D[Puppeteer Page Rendering]
+  D --> E[Axe-Core Accessibility Run]
+  E --> F[Error / Violation Classification - reporter.js]
+  F --> G[Save Report to MongoDB]
+  G --> H[Render UI - ScanResultScreen.jsx]
+```
 
-- Provider: `components/ThemeContext.js`
-- Toggle: `components/ThemeToggle.jsx`
-- Usage: `const { darkMode } = useTheme()`
-- Pattern:
-  - Replace `dark:` class usage with `darkMode ? '...' : '...'`
-  - Keep color tokens consistent (e.g., gray-50/100 borders, gray-800/900 backgrounds)
-  - Prefer clear text contrast (e.g., `text-gray-900` on light, `text-gray-300/200` on dark)
-
-Key screens that were updated:
-- Report (Summary/Pages/Violations)
-- History (cards/badges)
-- Dashboard (stat cards, recent list)
-- Scanner (impact/summary cards)
-- Login (panels/buttons)
-
----
-
-## UI Deep-Dive
-
-### Report (components/report.jsx)
-
-- Tabs
-  - Summary: Report Information, Violation Overview (impact totals), Top Violation Rules table
-  - Pages: Searchable list (path chips), active state indication, issue counts, node drawer (summary, target, failure text, HTML sample), **error states for failed pages**
-  - Violations: Global search + impact filter; cards show impact badge, ID, description, help link, tags, page path, nodes count
-
-- Light mode improvements
-  - Card backgrounds: white/gray-50 instead of mismatched tints
-  - Borders: gray-100/200; headers use subtle `border-b`
-  - Text: darkened to `text-gray-800/900`, supporting body `text-gray-600/700`
-  - Links: teal/cyan accents `#00d4ff` with hover underline
-
-- Dark mode refinements
-  - Containers: `bg-gray-800/900`, borders `gray-700`
-  - Headings: `text-gray-200`, body: `text-gray-300/400`
-  - Accent: cyan `#38bdf8` rollovers and active tab markers
-  - Node details: proper code block backgrounds and borders
-
-- **Error handling**
-  - Pages that fail to load show "Error" badge instead of violation count
-  - Page details display error message instead of violations
-  - Clear visual distinction between successful scans and failed pages
-
-### Dashboard (components/dashboard.jsx)
-
-- Cards for Total Scans, Last Login, Last Report (consistent with StatCard)
-- Quick Actions: Run Scan, View History
-- Recent Reports list with "issues count" badges
-- Before & After Comparisons section showing accessibility improvements
-- Legal Risk Mitigation section with:
-  - ADA violations fixed, compliance statistics, and estimated legal savings
-  - Recent web accessibility legal cases with settlement amounts
-  - Visual indicators of impact and risk reduction
-- Theme-aligned backgrounds and shadows throughout all sections
-
-### History (components/history.jsx)
-
-- Responsive report cards with consistent iconography and tag styles
-- Light/dark hover states and focus outlines
-
-### Scanner (components/scanner.jsx)
-
-- Impact StatCards consistent with report and dashboard
-- Clear progress/empty states
-- **Error handling for failed pages**: Shows "Page not found or unable to scan" message with error details
+### Core Components & Pages
+- **Auth Shell / Navigation**:
+  - [components/navbar.jsx](file:///e:/SGP4/Sgp-2/components/navbar.jsx) – Global HUD navbar with links and Theme Toggle.
+  - [components/footer.jsx](file:///e:/SGP4/Sgp-2/components/footer.jsx) – Global status footer (ping, node info).
+  - [components/login.jsx](file:///e:/SGP4/Sgp-2/components/login.jsx) – Dual-theme login window with OAuth hooks.
+- **Main Views**:
+  - [components/dashboard.jsx](file:///e:/SGP4/Sgp-2/components/dashboard.jsx) – Comprehensive statistics, before/after compliance charts, and Legal Risk Mitigation logs.
+  - [components/scanner.jsx](file:///e:/SGP4/Sgp-2/components/scanner.jsx) – Launch console showing real-time logs, scan phases, and current state metrics.
+  - [components/ScanResultScreen.jsx](file:///e:/SGP4/Sgp-2/components/ScanResultScreen.jsx) – Separate audit ledger showcasing three detailed tabs: Summary, Pages (crawled status), and Violations (impact categories).
+  - [components/history.jsx](file:///e:/SGP4/Sgp-2/components/history.jsx) – Grid view of previous scans.
+- **Shared Contexts & Utilities**:
+  - [components/ThemeContext.js](file:///e:/SGP4/Sgp-2/components/ThemeContext.js) – Global client context to manage dark mode status.
+  - [utils/pdfGenerator.js](file:///e:/SGP4/Sgp-2/utils/pdfGenerator.js) – Converts reports to tabular print layouts.
+  - [utils/secureStorage.js](file:///e:/SGP4/Sgp-2/utils/secureStorage.js) – AES-256-GCM encryption/decryption of scanning auth credentials.
 
 ---
 
-## API (overview)
+## 💾 Database Schemas
 
-- Auth
-  - `app/api/auth/[...nextauth]/route.js`
-    - Upserts user on sign-in; sets `lastLoginAt`, initializes `scansCount` and `latestScan`
-- Current user
-  - `app/api/user/me/route.js` – returns authenticated user (may include `latestScan`)
-- Reports
-  - `app/api/reports/[id]/route.js` – returns a single report JSON for the Report page
-- Scan
-  - `app/api/scan/route.js` – kick off a scan (implementation starter available)
-  - **Enhanced error handling**: Failed page scans are now tracked and included in reports with error metadata
+### User Model ([models/user.js](file:///e:/SGP4/Sgp-2/models/user.js))
+Tracks user details, roles, total scans counts, and last login timestamps:
+```javascript
+{
+  fullName: String,
+  email: String,
+  imageUrl: String,
+  role: { type: String, default: "user" },
+  lastLoginAt: Date,
+  scansCount: { type: Number, default: 0 },
+  latestScan: { type: mongoose.Schema.Types.ObjectId, ref: "ScanReport" }
+}
+```
 
-Models:
-- `models/user.js` – `fullName`, `email` (unique, lowercase), `imageUrl`, managed fields: `role`, `lastLoginAt`, `scansCount`, `latestScan`
-- `models/scanReport.js` – Enhanced with error tracking: `scanError` and `errorMessage` fields in page metadata
+### ScanReport Model ([models/scanReport.js](file:///e:/SGP4/Sgp-2/models/scanReport.js))
+Stores multi-page crawl lists, violation payloads, and overall health reports:
+```javascript
+{
+  reportId: { type: String, required: true, unique: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  baseUrl: { type: String, required: true },
+  startedAt: { type: Date, required: true },
+  finishedAt: { type: Date },
+  pages: [{
+    url: String,
+    violations: [ViolationItemSchema],
+    meta: {
+      passesCount: Number,
+      incompleteCount: Number,
+      inapplicableCount: Number,
+      tags: [String],
+      scanError: Boolean,
+      errorMessage: String,
+      originalError: String
+    }
+  }],
+  summary: {
+    pages: Number,
+    totalNodes: Number,
+    totalRules: Number,
+    byImpactNodes: {
+      minor: Number,
+      moderate: Number,
+      serious: Number,
+      critical: Number,
+      "needs-review": Number
+    },
+    byCategoryNodes: {
+      perceivable: Number,
+      operable: Number,
+      understandable: Number,
+      robust: Number
+    },
+    topRules: [{ rule: String, nodes: Number }]
+  }
+}
+```
+
+### ScanAuthProfile Model ([models/scanAuthProfile.js](file:///e:/SGP4/Sgp-2/models/scanAuthProfile.js))
+Saves encrypted auth configurations per host domain origin:
+```javascript
+{
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  origin: { type: String, required: true },
+  method: { type: String, required: true }, // "credentials" | "session"
+  loginUrl: { type: String, default: "" },
+  encryptedPayload: { type: String, required: true }, // AES-256-GCM
+  lastUsedAt: { type: Date },
+  lastAuthSuccessAt: { type: Date },
+  lastAuthError: { type: String, default: "" }
+}
+```
 
 ---
 
-## Error Handling Features
+## 🎨 Design Tokens & Color Systems
 
-### Page Scan Failures
+We use a **Clinical Brutalist HUD** styling strategy:
 
-When pages cannot be accessed during scanning (404 errors, timeouts, network issues, etc.), the system now:
+| Variable | Light Theme Value | Dark Theme Value | Purpose / Description |
+| :--- | :--- | :--- | :--- |
+| `--primary` | `#004d4b` | `#86d4d0` | Primary brand/heading color |
+| `--secondary` | `#006d40` | `#ffffff` | Accent / Success state text |
+| `--secondary-container` | `#00f999` | `#36ffc4` | Accent / Success state background |
+| `--tertiary` | `#434545` | `#ffb693` | Legal Risk status labels |
+| `--error` | `#ba1a1a` | `#ffb4ab` | High impact errors |
+| `--error-container` | `#ffdad6` | `#93000a` | Background container for errors |
+| `--surface` | `#f8fafa` | `#131313` | Main screen background |
+| `--surface-container` | `#eceeee` | `#201f1f` | Card and component surfaces |
 
-1. **Tracks failed pages** instead of silently skipping them
-2. **Records error details** in the page metadata
-3. **Displays clear error messages** in the UI:
-   - "Page not found or unable to scan" heading
-   - Specific error message when available
-   - Error badge in page lists
-   - Distinct red error styling
-
-### Error States in UI
-
-- **Scanner**: Failed pages show error icon and message instead of violations
-- **Report Pages tab**: Error badge replaces violation count, error details in page view
-- **Report Violations tab**: Failed pages are excluded from violation aggregation
-- **Dashboard**: Error pages don't contribute to violation statistics
+> [!NOTE]
+> Theme colors should never be applied with standard Tailwind CSS prefix classes like `dark:bg-black`. Instead, read the reactive `darkMode` state using `useTheme()` to apply conditional templates: `className={darkMode ? "bg-cx-surface-container" : "bg-white"}`.
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
-Prerequisites
-- Node.js 18+
-- MongoDB (Atlas or local)
+### Prerequisites
+- **Node.js** 18 or above.
+- **MongoDB** (Atlas Cloud instance or a local daemon).
 
-Install
+### Step-by-Step Installation
+
+1. **Clone and Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Configure Environment Variables**
+   Create a [.env.local](file:///e:/SGP4/Sgp-2/.env.local) file in the root directory:
+   ```env
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=generate-a-random-base64-key-here
+   GITHUB_ID=your-github-oauth-client-id
+   GITHUB_SECRET=your-github-oauth-client-secret
+   GOOGLE_ID=your-google-oauth-client-id
+   GOOGLE_SECRET=your-google-oauth-client-secret
+   MONGODB_URI="mongodb+srv://USER:PASS@cluster-url/dbname?retryWrites=true&w=majority"
+   SCAN_AUTH_ENCRYPTION_KEY=your-aes-256-gcm-secret-key
+   ```
+
+   > [!TIP]
+   > To generate a secure `NEXTAUTH_SECRET` on Windows PowerShell, run:
+   > ```powershell
+   > node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   > ```
+
+3. **Install Puppeteer Browsers**
+   ```bash
+   npx puppeteer install
+   ```
+
+4. **Launch Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3000` in your web browser.
+
+---
+
+## 📟 Command Line Interface (CLI) Scan Utility
+
+AccessibilityGuard includes a CLI scanner script ([actions/backend.js](file:///e:/SGP4/Sgp-2/actions/backend.js)) that runs outside of the Next.js web application. You can execute crawls directly from your terminal and save reports to MongoDB:
+
 ```bash
-npm install
+npm run scan -- --url https://your-site.com --max-pages 20 --concurrency 2 --json ./.scan-results
 ```
 
-Environment (.env.local)
-```env
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=<base64-32B>
-GITHUB_ID=<id>
-GITHUB_SECRET=<secret>
-GOOGLE_ID=<id>
-GOOGLE_SECRET=<secret>
-MONGODB_URI="mongodb+srv://USER:PASS@cluster0.ckhtw2k.mongodb.net/access_guard?retryWrites=true&w=majority&appName=Cluster0"
-```
-
-Generate a secret (Windows PowerShell)
-```powershell
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-```
-
-Run (dev)
-```bash
-npm run dev
-# http://localhost:3000
-```
-
-Build & Start
-```bash
-npm run build
-npm start
-```
-
-Lint
-```bash
-npm run lint
-```
+### CLI Parameters
+- `--url`: (Required) The start URL to crawl.
+- `--max-pages`: Maximum number of pages to discover (default: `50`).
+- `--concurrency`: Number of concurrent Puppeteer page workers (default: `2`).
+- `--delay`: Delay in milliseconds between page scans (default: `1000`).
+- `--include`: Glob filter for page paths to include.
+- `--exclude`: Glob filter for page paths to exclude.
+- `--wait-ms`: Page loading settle timer in milliseconds (default: `4000`).
+- `--json`: Local directory path to export report/summary JSON files.
 
 ---
 
-## Design Tokens & Patterns
+## 🔌 Using the Browser Session Extension
 
-- Accent (light): `#00483a` headings, `#00d4ff` links/primary CTAs
-- Accent (dark): `#38bdf8` interactive focus/hovers
-- Surface
-  - Light: `white`, `gray-50`, borders: `gray-100/200`
-  - Dark: `gray-800/900`, borders: `gray-700`
-- Text
-  - Light: headings `gray-800/900`, body `gray-600/700`
-  - Dark: headings `gray-200`, body `gray-300/400`
-- Status
-  - critical/serious/moderate/minor: red/orange/amber/yellow families
-  - needs‑review: neutral gray
-  - **error states**: red backgrounds with appropriate contrast
+To scan pages behind strict authentication walls:
+
+1. Open Chrome and navigate to `chrome://extensions/`.
+2. Toggle on **Developer mode** (top-right).
+3. Click **Load unpacked** and select the [browser-extension](file:///e:/SGP4/Sgp-2/browser-extension) directory in this repo.
+4. Go to the target site, log in manually using your browser.
+5. In AccessibilityGuard Scanner setup, input the target URL, click **Import Session**, and the extension will securely synchronize active cookies and store sessions directly into your profile.
 
 ---
 
-## Accessibility
+## 🩺 Resilient Error Classification Reference
 
-- Focus-visible styles on links, buttons, inputs
-- High color contrast in both themes
-- Semantic structure on cards, lists, and tables
-- Keyboard-friendly navigation and summary/details sections
-- **Clear error messaging** for failed page scans with appropriate ARIA labels
+When a crawl fails to open a page, [actions/lib/reporter.js](file:///e:/SGP4/Sgp-2/actions/lib/reporter.js) maps the internal Chrome exception to clean user notifications:
 
----
-
-## Troubleshooting
-
-- Hydration mismatch
-  - Theme is client-only via context. Avoid `dark:` CSS at the root; prefer conditional classes with `darkMode` state.
-- Missing user data in dashboard
-  - Ensure NextAuth callback populates `lastLoginAt` and that `/api/user/me` is reachable.
-- MongoDB writes to `test`
-  - Database name must appear before `?` in the URI: `...mongodb.net/access_guard?...`, not `...mongodb.net/?.../access_guard`.
-- **Page scan failures**
-  - Check network connectivity and URL accessibility
-  - Failed pages are now tracked and displayed rather than silently ignored
-  - Error details are logged in browser console for debugging
-- **SSL Certificate Issues**
-  - The scanner automatically bypasses SSL certificate errors for accessibility testing
-  - Sites with invalid, expired, or self-signed certificates can still be scanned
-  - SSL errors are shown with user-friendly messages (e.g., "SSL certificate issue - the website's security certificate could not be verified")
-  - Original technical error details are preserved for debugging
+| Error Code | Classification | Trigger Pattern | UI Friendly Message |
+| :--- | :--- | :--- | :--- |
+| `AUTH_FAILED` | Authentication | Login failure / wrong credentials | Login failed - verify username or password fields |
+| `SSL_ERROR` | SSL Certificate | `ERR_CERT_AUTHORITY_INVALID` | SSL certificate issue - website certificate could not be verified |
+| `CONNECTION_REFUSED` | Network | `ERR_CONNECTION_REFUSED` | Connection refused - target website is offline or blocking requests |
+| `URL_NOT_FOUND` | DNS | `ERR_NAME_NOT_RESOLVED` | Website not found - domain name could not be resolved |
+| `TIMEOUT` | Performance | `Navigation timeout` | Connection timed out - website took too long to load |
+| `PAGE_NOT_FOUND` | HTTP Status | `HTTP 404` | Page not found (404) - this URL does not exist |
+| `ACCESS_FORBIDDEN` | Restriction | `HTTP 403` | Access forbidden (403) - page has scanning restrictions |
 
 ---
 
-## Roadmap
+## ❓ Troubleshooting
 
-- Persist scan reports (`scanReport` model) and wire History/Report to DB
-- Bulk export and shareable report URLs
-- Advanced filters (WCAG levels, tags)
-- Lighthouse/Pa11y integration experiments
-- Enhanced legal compliance tracking with jurisdiction-specific guidelines
-- Timeline view of accessibility improvements with historical comparisons
-- Risk calculator based on industry, traffic, and violation severity
-- **Retry mechanism for failed page scans**
-- **Detailed error categorization** (network, timeout, 404, etc.)
+* **Hydration Mismatch Warnings**
+  * The custom brutality theme is loaded client-side via LocalStorage initialization. Avoid using Tailwind `dark:` selectors directly on root server components; verify component logic renders dynamically using the reactive `darkMode` boolean.
+* **Scan fails due to certificate issues**
+  * The crawler automatically passes flags like `--ignore-certificate-errors` inside Puppeteer initialization to bypass SSL errors, but logs a friendly warning flag in the pages list.
+* **Encryption Key Error**
+  * Make sure `SCAN_AUTH_ENCRYPTION_KEY` is configured in your `.env.local` to enable credential storage.
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Timeline graph showing historical accessibility metrics on the Dashboard.
+- [ ] Direct export to Excel and HTML formats.
+- [ ] Advanced selector configuration to exclude specific DOM sub-sections from scans.
+- [ ] Lighthouse integration to scan mobile viewport performance alongside accessibility audits.
